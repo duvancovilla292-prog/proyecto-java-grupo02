@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ============================================================
+  Archivo: pom.xml
+  Propósito: Descriptor Maven del Sistema de Gestión de Taller (SGT) CarMotors.
+  Conceptos clave: ciclo de vida Maven (compile, package), dependencia JDBC
+  (mysql-connector-j 8.4.0, la misma versión usada en la sesión 18) y
+  exec-maven-plugin para ejecutar con "mvn exec:java".
+  Justificación: replica la configuración del POM de la sesión 18 (release 17,
+  UTF-8, Connector/J 8.4.0) y solo agrega el plugin de ejecución para que un
+  tercero pueda correr la aplicación desde la terminal sin IntelliJ.
+  ============================================================
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.carmotors</groupId>
+    <artifactId>proyecto-java-grupo02</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    <name>CarMotors - Sistema de Gestion de Taller</name>
+
+    <properties>
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <mysql.connector.version>8.4.0</mysql.connector.version>
+        <!-- Clase con el método main: punto de entrada y raíz de composición. -->
+        <exec.mainClass>com.carmotors.Main</exec.mainClass>
+    </properties>
+
+    <dependencies>
+        <!-- Driver JDBC de MySQL: solo se necesita en tiempo de ejecución por DriverManager. -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>${mysql.connector.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+            </plugin>
+            <!-- Permite: mvn compile exec:java -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>${exec.mainClass}</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
