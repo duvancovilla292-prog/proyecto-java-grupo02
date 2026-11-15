@@ -1,17 +1,4 @@
-/*
- * ============================================================
- * Archivo: InventarioServicio.java
- * Propósito: lógica de negocio del Módulo de Gestión de Inventario:
- *            registro de repuestos, ingreso de lotes, búsqueda, alertas
- *            y las reglas RESERVAR / DEDUCIR stock.
- * Conceptos clave: capa de servicio, inyección de dependencias por
- *            constructor, Streams (filter, sorted, toList - sesión 20),
- *            Predicate como lambda, PATRÓN OBSERVER (publica alertas).
- * Justificación: es la única clase que modifica cantidades de stock.
- *            Las órdenes de servicio no tocan RepuestoDAO directamente: piden
- *            reservar/deducir aquí, de modo que la regla vive en un solo lugar (SRP).
- * ============================================================
- */
+
 package com.carmotors.servicio;
 
 import com.carmotors.dao.LoteDAO;
