@@ -1,13 +1,3 @@
-/*
- * ============================================================
- * Archivo: InventarioController.java
- * Propósito: controlador del Módulo de Gestión de Inventario.
- * Conceptos clave: MVC - Controlador, COMMAND, inyección de dependencias.
- * Justificación: pide datos a la vista, delega en InventarioServicio y
- *            entrega resultados a la vista; las alertas automáticas de stock
- *            bajo llegan solas por el patrón Observer configurado al arrancar.
- * ============================================================
- */
 package com.carmotors.controlador;
 
 import com.carmotors.modelo.Repuesto;

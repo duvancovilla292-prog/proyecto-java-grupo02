@@ -1,14 +1,4 @@
-/*
- * ============================================================
- * Archivo: InventarioVista.java
- * Propósito: menú y presentación del Módulo de Inventario: tipos,
- *            repuestos, lotes y reporte de alertas.
- * Conceptos clave: MVC - Vista, implementa VistaMenu, composición con
- *            VistaConsola, TEMPLATE METHOD (ReporteAlertasInventario).
- * Justificación: muestra stock físico, reservado y disponible por separado
- *            para que el jefe de taller vea el efecto de la regla "Reservado".
- * ============================================================
- */
+
 package com.carmotors.vista;
 
 import com.carmotors.modelo.Lote;
