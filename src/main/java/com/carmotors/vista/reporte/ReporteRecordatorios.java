@@ -1,13 +1,4 @@
-/*
- * ============================================================
- * Archivo: ReporteRecordatorios.java
- * Propósito: presentar los clientes a notificar por su próximo mantenimiento preventivo.
- * Conceptos clave: PATRÓN TEMPLATE METHOD (subclase de ReporteGerencial,
- *            S14Demo05), Stream.map + toList para convertir datos en líneas.
- * Justificación: solo da FORMATO; los cálculos llegan hechos desde la capa
- *            de servicio como objetos del modelo (SRP / separación MVC).
- * ============================================================
- */
+
 package com.carmotors.vista.reporte;
 
 import com.carmotors.modelo.RecordatorioMantenimiento;

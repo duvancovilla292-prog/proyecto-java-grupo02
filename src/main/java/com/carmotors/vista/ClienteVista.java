@@ -1,16 +1,4 @@
-/*
- * ============================================================
- * Archivo: ClienteVista.java
- * Propósito: menú y presentación del Módulo de Clientes: clientes,
- *            vehículos, perfil con historial y recordatorios.
- * Conceptos clave: MVC - Vista, implementa VistaMenu (interfaz, sesión 07),
- *            composición con VistaConsola, List.of + for-each,
- *            TEMPLATE METHOD (ReporteRecordatorios).
- * Justificación: el texto del menú y el formato de los datos son
- *            responsabilidad de la vista; el controlador solo decide qué
- *            acción ejecutar. La vista recibe objetos del modelo ya calculados.
- * ============================================================
- */
+
 package com.carmotors.vista;
 
 import com.carmotors.modelo.Cliente;
