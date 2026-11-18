@@ -1,4 +1,32 @@
-
+/*
+ * ============================================================
+ * Archivo: ClienteVista.java
+ * Propósito: menú y presentación del Módulo de Clientes: clientes,
+ *            vehículos, perfil con historial y recordatorios.
+ * Conceptos clave: MVC - Vista, implementa VistaMenu (interfaz, sesión 07),
+ *            composición con VistaConsola, List.of + for-each,
+ *            TEMPLATE METHOD (ReporteRecordatorios).
+ * Justificación: el texto del menú y el formato de los datos son
+ *            responsabilidad de la vista; el controlador solo decide qué
+ *            acción ejecutar. La vista recibe objetos del modelo ya calculados.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+ *   - @Override y polimorfismo -> S07Demo01 EnvioExpress y S07Demo02PolimorfismoMain (Sesión 07)
+ *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
+ *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
+ *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+ *   - List.of / List.copyOf -> S19Demo03ReglasOrdenMain List.of y S20Demo02 Orden List.copyOf (Sesiones 19 y 20)
+ *   - Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
+ *   - MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
+ *   - expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
+ *   - referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
+ *   - Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
+ * ============================================================
+ */
 package com.carmotors.vista;
 
 import com.carmotors.modelo.Cliente;

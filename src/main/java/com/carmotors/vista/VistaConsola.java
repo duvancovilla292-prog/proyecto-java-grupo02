@@ -10,6 +10,24 @@
  *            resultados, pero NO decide reglas de negocio. Un error de formato
  *            se traduce a DatoInvalidoException para que el controlador lo
  *            muestre con el mismo mecanismo que los demás errores.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - métodos y miembros static -> S05Demo02ConversorTemperatura (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
+ *   - Scanner y hasNextLine -> S03Scanner (Sesión 03) y S18Demo01 VistaConsola (Sesión 18)
+ *   - String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
+ *   - toUpperCase / toLowerCase / contains -> S10Demo00SetMain normalizar y S18Demo00 correo.contains (Sesiones 10 y 18)
+ *   - conversiones: Integer.parseInt, String.valueOf, cast (int)/(double) -> S04DemoConversiones (Sesión 04) y S08Demo00 cast (double) (Sesión 08)
+ *   - arreglos y split -> S08Demo00ArreglosMain (Sesión 08) y S17Demo02LecturaMain split (Sesión 17)
+ *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+ *   - Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - multi-catch y catch (RuntimeException) -> S16Demo02 EjecutorPrueba (Sesión 16)
+ *   - LocalDate.of -> S12Demo02BuilderMain y S14Demo07 Mediator (Sesiones 12 y 14)
+ *   - MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
  * ============================================================
  */
 package com.carmotors.vista;

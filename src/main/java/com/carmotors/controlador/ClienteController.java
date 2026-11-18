@@ -8,6 +8,18 @@
  *            entrega los resultados a la vista; no valida reglas ni consulta
  *            la BD. Lee los datos a través de la vista con etiquetas, igual
  *            que UsuarioController de S18Demo01.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+ *   - herencia extends / super(...) -> S07Demo00 Estudiante extends Usuario (Sesión 07)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
+ *   - String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - PATRÓN TEMPLATE METHOD (método final + hooks) -> S14Demo05 ProcesoReporte (Sesión 14)
+ *   - MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
+ *   - expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
  * ============================================================
  */
 package com.carmotors.controlador;

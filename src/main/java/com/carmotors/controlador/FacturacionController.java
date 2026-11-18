@@ -7,6 +7,17 @@
  *            (cálculos y BD), la vista arma su texto y el servicio guarda ese
  *            texto en el archivo .txt. Los reportes se calculan en
  *            ReporteServicio y se presentan en la vista.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+ *   - herencia extends / super(...) -> S07Demo00 Estudiante extends Usuario (Sesión 07)
+ *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - PATRÓN TEMPLATE METHOD (método final + hooks) -> S14Demo05 ProcesoReporte (Sesión 14)
+ *   - Path / Files / BufferedWriter / StandardOpenOption -> S17Demo00RutasMain, S17Demo01EscrituraMain y S17Demo03GestionMain (Sesión 17)
+ *   - MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
+ *   - expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
  * ============================================================
  */
 package com.carmotors.controlador;

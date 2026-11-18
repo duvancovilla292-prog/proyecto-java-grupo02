@@ -9,6 +9,9 @@
  *            controlador solo asocia cada número con una acción (Command) y
  *            ControladorBase pide el menú a esta interfaz, sin conocer qué
  *            vista concreta lo dibuja (Inversión de Dependencias).
+ * Visto en clase (demos del curso):
+ *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+ *   - Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
  * ============================================================
  */
 package com.carmotors.vista;

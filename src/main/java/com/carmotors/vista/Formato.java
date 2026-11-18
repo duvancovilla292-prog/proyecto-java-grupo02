@@ -10,6 +10,15 @@
  *            vive en la capa vista: los servicios devuelven números y fechas y
  *            solo las vistas los convierten en texto. Centralizarlo evita
  *            duplicación (DRY) sin depender de librerías externas.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - métodos y miembros static -> S05Demo02ConversorTemperatura (Sesión 05)
+ *   - operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
+ *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
+ *   - String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
+ *   - conversiones: Integer.parseInt, String.valueOf, cast (int)/(double) -> S04DemoConversiones (Sesión 04) y S08Demo00 cast (double) (Sesión 08)
  * ============================================================
  */
 package com.carmotors.vista;

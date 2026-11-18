@@ -8,6 +8,16 @@
  * Justificación: no conoce la lógica de ningún módulo ni los textos del menú
  *            (los da la vista MenuPrincipal); agregar un módulo nuevo es
  *            registrar una línea más (OCP).
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+ *   - herencia extends / super(...) -> S07Demo00 Estudiante extends Usuario (Sesión 07)
+ *   - @Override y polimorfismo -> S07Demo01 EnvioExpress y S07Demo02PolimorfismoMain (Sesión 07)
+ *   - modificador protected -> S07Demo00 Usuario.describirIdentidad (Sesión 07)
+ *   - PATRÓN TEMPLATE METHOD (método final + hooks) -> S14Demo05 ProcesoReporte (Sesión 14)
+ *   - MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
+ *   - expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
  * ============================================================
  */
 package com.carmotors.controlador;

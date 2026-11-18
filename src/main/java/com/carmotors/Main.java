@@ -12,6 +12,21 @@
  *            (XxxDAOJdbc, ImpuestoIva...). El resto del sistema depende de
  *            interfaces (DIP): cambiar MySQL por otro almacenamiento o la
  *            política de impuestos se hace aquí, sin tocar servicios ni vistas.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - métodos y miembros static -> S05Demo02ConversorTemperatura (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - Scanner y hasNextLine -> S03Scanner (Sesión 03) y S18Demo01 VistaConsola (Sesión 18)
+ *   - arreglos y split -> S08Demo00ArreglosMain (Sesión 08) y S17Demo02LecturaMain split (Sesión 17)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - PATRÓN SINGLETON -> S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - PATRÓN FACADE -> S13Demo01 CheckoutFacade (Sesión 13)
+ *   - PATRÓN OBSERVER -> S14Demo01 PublicadorPedidos (Sesión 14)
+ *   - Path / Files / BufferedWriter / StandardOpenOption -> S17Demo00RutasMain, S17Demo01EscrituraMain y S17Demo03GestionMain (Sesión 17)
+ *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
+ *   - MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
+ *   - referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
  * ============================================================
  */
 package com.carmotors;

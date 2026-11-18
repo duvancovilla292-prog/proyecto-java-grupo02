@@ -10,6 +10,15 @@
  *            una vez y cada reporte nuevo se agrega con una subclase (OCP). Vive
  *            en la capa vista porque solo transforma datos ya calculados por
  *            los servicios en líneas de texto para la consola.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - clase abstracta y métodos abstractos -> S07Demo03 Poliza (Sesión 07)
+ *   - modificador protected -> S07Demo00 Usuario.describirIdentidad (Sesión 07)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - toUpperCase / toLowerCase / contains -> S10Demo00SetMain normalizar y S18Demo00 correo.contains (Sesiones 10 y 18)
+ *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+ *   - PATRÓN TEMPLATE METHOD (método final + hooks) -> S14Demo05 ProcesoReporte (Sesión 14)
  * ============================================================
  */
 package com.carmotors.vista.reporte;
