@@ -1,4 +1,18 @@
-
+/*
+ * ============================================================
+ * Archivo: ClienteServicio.java
+ * Propósito: lógica del Módulo de Gestión de Clientes: perfiles,
+ *            vehículos, historial de servicios y recordatorios de
+ *            mantenimiento preventivo.
+ * Conceptos clave: capa de servicio, Streams (filter, map, sorted,
+ *            anyMatch, toList), Map/HashMap para búsquedas por id
+ *            (sesión 10). Las fechas del recordatorio las calcula MySQL
+ *            (CalendarioPreventivo); aquí solo se aplica la regla.
+ * Justificación: las validaciones de unicidad (documento, email, placa)
+ *            se hacen ANTES de llamar al DAO para dar mensajes claros; la BD
+ *            conserva las restricciones UNIQUE como respaldo.
+ * ============================================================
+ */
 package com.carmotors.servicio;
 
 import com.carmotors.dao.ClienteDAO;
@@ -168,6 +182,16 @@ public class ClienteServicio {
             throw new ReglaNegocioException("El vehículo tiene historial de servicios; no se puede eliminar.");
         }
         vehiculoDAO.eliminar(vehiculo.getId());
+    }
+
+    /** Consulta sin excepción: ¿existe un cliente con ese documento? (la usa TallerFacade). */
+    public boolean existeCliente(String documento) throws SQLException {
+        return documento != null && clienteDAO.buscarPorDocumento(documento.strip()) != null;
+    }
+
+    /** Consulta sin excepción: ¿existe un vehículo con esa placa? (la usa TallerFacade). */
+    public boolean existeVehiculo(String placa) throws SQLException {
+        return vehiculoDAO.buscarPorPlaca(placa) != null;
     }
 
     public Vehiculo obtenerVehiculo(String placa) throws SQLException {
