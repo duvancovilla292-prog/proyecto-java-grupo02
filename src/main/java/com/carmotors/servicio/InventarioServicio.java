@@ -1,4 +1,18 @@
-
+/*
+ * ============================================================
+ * Archivo: InventarioServicio.java
+ * Propósito: lógica de negocio del Módulo de Gestión de Inventario:
+ *            registro de repuestos, ingreso de lotes, búsqueda, alertas
+ *            y las reglas RESERVAR / DEDUCIR stock.
+ * Conceptos clave: capa de servicio, inyección de dependencias por
+ *            constructor, Streams (filter, sorted, toList - sesión 20),
+ *            Predicate y Comparator declarados como constantes (S19Demo03),
+ *            PATRÓN OBSERVER (publica alertas).
+ * Justificación: es la única clase que modifica cantidades de stock.
+ *            Las órdenes de servicio no tocan RepuestoDAO directamente: piden
+ *            reservar/deducir aquí, de modo que la regla vive en un solo lugar (SRP).
+ * ============================================================
+ */
 package com.carmotors.servicio;
 
 import com.carmotors.dao.LoteDAO;
@@ -14,9 +28,19 @@ import com.carmotors.modelo.TipoRepuesto;
 import com.carmotors.servicio.observador.PublicadorInventario;
 
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class InventarioServicio {
+    // Reglas reutilizables declaradas con su interfaz funcional (sesión 19).
+    private static final Predicate<Repuesto> BAJO_MINIMO = Repuesto::estaBajoMinimo;
+    // Más crítico primero: el que está más por debajo de su mínimo.
+    private static final Comparator<Repuesto> POR_CRITICIDAD = (a, b) -> Integer.compare(
+            a.getDisponible() - a.getStockMinimo(), b.getDisponible() - b.getStockMinimo());
+    // El lote que caduca antes va primero.
+    private static final Comparator<Lote> POR_CADUCIDAD = (a, b) -> a.getFechaCaducidad().compareTo(b.getFechaCaducidad());
+
     private final RepuestoDAO repuestoDAO;
     private final TipoRepuestoDAO tipoDAO;
     private final LoteDAO loteDAO;
@@ -112,9 +136,8 @@ public class InventarioServicio {
     /** Alerta 1: repuestos cuyo disponible está por debajo del mínimo, del más crítico al menos crítico. */
     public List<Repuesto> repuestosBajoMinimo() throws SQLException {
         return repuestoDAO.listar().stream()
-                .filter(Repuesto::estaBajoMinimo)
-                .sorted((a, b) -> Integer.compare(a.getDisponible() - a.getStockMinimo(),
-                        b.getDisponible() - b.getStockMinimo()))
+                .filter(BAJO_MINIMO)
+                .sorted(POR_CRITICIDAD)
                 .toList();
     }
 
@@ -125,7 +148,7 @@ public class InventarioServicio {
         }
         // La fecha límite (hoy + días) la calcula MySQL dentro de la consulta del DAO.
         return loteDAO.listarPorVencer(dias).stream()
-                .sorted((a, b) -> a.getFechaCaducidad().compareTo(b.getFechaCaducidad()))
+                .sorted(POR_CADUCIDAD)
                 .toList();
     }
 
