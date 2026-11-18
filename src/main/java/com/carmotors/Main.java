@@ -7,7 +7,7 @@
  * Conceptos clave: inyección de dependencias manual por constructor
  *            (como el Main de S18Demo01, que "solo ensambla"), PATRÓN
  *            SINGLETON (ConexionFactory), OBSERVER (suscripción con vista::mostrarAlerta),
- *            STRATEGY (se elige ImpuestoIva(19)), try-with-resources sobre Scanner.
+ *            STRATEGY (se elige ImpuestoIva(19)), FACADE (TallerFacade), try-with-resources sobre Scanner.
  * Justificación: es el ÚNICO lugar que conoce las clases concretas
  *            (XxxDAOJdbc, ImpuestoIva...). El resto del sistema depende de
  *            interfaces (DIP): cambiar MySQL por otro almacenamiento o la
@@ -52,6 +52,7 @@ import com.carmotors.servicio.InventarioServicio;
 import com.carmotors.servicio.OrdenServicioServicio;
 import com.carmotors.servicio.ProveedorServicio;
 import com.carmotors.servicio.ReporteServicio;
+import com.carmotors.servicio.TallerFacade;
 import com.carmotors.servicio.impuesto.ImpuestoIva;
 import com.carmotors.servicio.observador.AlertaStockObservador;
 import com.carmotors.servicio.observador.PublicadorInventario;
@@ -128,7 +129,8 @@ public class Main {
             // 5) Controladores con sus vistas, y menú principal.
             MenuPrincipalController menu = new MenuPrincipalController(consola, menuPrincipal,
                     new InventarioController(consola, new InventarioVista(consola), inventario),
-                    new OrdenServicioController(consola, new OrdenServicioVista(consola), ordenes),
+                    new OrdenServicioController(consola, new OrdenServicioVista(consola), ordenes,
+                            new TallerFacade(clientes, ordenes)),  // Facade
                     new ClienteController(consola, new ClienteVista(consola), clientes),
                     new FacturacionController(consola, new FacturacionVista(consola), facturacion, reportes),
                     new ProveedorController(consola, new ProveedorVista(consola), proveedores));
