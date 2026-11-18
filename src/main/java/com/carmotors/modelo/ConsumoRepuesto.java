@@ -7,6 +7,10 @@
  * Justificación: el servicio CALCULA y devuelve datos; la vista decide cómo
  *            mostrarlos. Así la capa de servicio no contiene formato de
  *            presentación (SRP y separación MVC).
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
  * ============================================================
  */
 package com.carmotors.modelo;

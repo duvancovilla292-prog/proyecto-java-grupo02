@@ -7,6 +7,14 @@
  *            llenados por JOIN para mostrar nombres.
  * Justificación: permite comparar con Streams el costo del mismo
  *            repuesto entre varios proveedores.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+ *   - operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
  * ============================================================
  */
 package com.carmotors.modelo;

@@ -10,6 +10,11 @@
  *            a una fecha y obtener la fecha actual lo resuelve MySQL
  *            (DATE_ADD, CURDATE) en la consulta del DAO. La REGLA de negocio
  *            (¿se notifica?, ¿está vencido?) queda aquí, en Java.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+ *   - Predicate<T> / Comparator<T> / compareTo -> S19Demo03ReglasOrdenMain (Sesión 19)
  * ============================================================
  */
 package com.carmotors.modelo;

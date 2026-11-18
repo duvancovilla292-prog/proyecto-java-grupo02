@@ -6,6 +6,10 @@
  *            decimal (cast a double, sesión 02 y S08Demo00).
  * Justificación: el ranking de proveedores ordena estos objetos con un
  *            Comparator (sesión 19) sin tocar la entidad Proveedor.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
  * ============================================================
  */
 package com.carmotors.modelo;
