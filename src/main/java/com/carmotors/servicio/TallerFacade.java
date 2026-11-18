@@ -34,6 +34,11 @@ public class TallerFacade {
     private final ClienteServicio clientes;
     private final OrdenServicioServicio ordenes;
 
+    /** Crea los servicios que coordina. */
+    public TallerFacade() {
+        this(new ClienteServicio(), new OrdenServicioServicio());
+    }
+
     public TallerFacade(ClienteServicio clientes, OrdenServicioServicio ordenes) {
         this.clientes = clientes;
         this.ordenes = ordenes;

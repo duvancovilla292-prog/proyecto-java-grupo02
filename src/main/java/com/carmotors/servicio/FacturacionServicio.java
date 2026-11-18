@@ -34,6 +34,10 @@
  */
 package com.carmotors.servicio;
 
+import com.carmotors.config.ConexionFactory;
+import com.carmotors.dao.jdbc.ClienteDAOJdbc;
+import com.carmotors.dao.jdbc.FacturaDAOJdbc;
+import com.carmotors.servicio.impuesto.ImpuestoIva;
 import com.carmotors.dao.ClienteDAO;
 import com.carmotors.dao.FacturaDAO;
 import com.carmotors.excepcion.RecursoNoEncontradoException;
@@ -61,6 +65,13 @@ public class FacturacionServicio {
     private final OrdenServicioServicio ordenes;    // reutiliza reglas de órdenes (State)
     private final PoliticaImpuesto politicaImpuesto; // Strategy
     private final Path carpetaFacturas;              // destino de los .txt
+
+    /** Crea sus DAO y toma el IVA y la carpeta de facturas de la configuración (Singleton). */
+    public FacturacionServicio() {
+        this(new FacturaDAOJdbc(ConexionFactory.getInstancia()), new ClienteDAOJdbc(ConexionFactory.getInstancia()),
+                new OrdenServicioServicio(), new ImpuestoIva(ConexionFactory.getInstancia().getIvaPorcentaje()),  // Strategy elegida
+                ConexionFactory.getInstancia().getCarpetaFacturas());
+    }
 
     public FacturacionServicio(FacturaDAO facturaDAO, ClienteDAO clienteDAO, OrdenServicioServicio ordenes,
                                PoliticaImpuesto politicaImpuesto, Path carpetaFacturas) {

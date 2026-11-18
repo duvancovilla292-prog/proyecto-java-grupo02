@@ -36,6 +36,11 @@ public class ClienteController extends ControladorBase {
     private final ClienteVista vista;
     private final ClienteServicio servicio;
 
+    /** Crea su vista y su servicio: el módulo se instancia solo cuando el usuario entra a él. */
+    public ClienteController(VistaConsola consola) {
+        this(consola, new ClienteVista(consola), new ClienteServicio());
+    }
+
     public ClienteController(VistaConsola consola, ClienteVista vista, ClienteServicio servicio) {
         super(consola, vista);
         this.vista = vista;

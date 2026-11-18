@@ -31,6 +31,11 @@ public class InventarioController extends ControladorBase {
     private final InventarioVista vista;
     private final InventarioServicio servicio;
 
+    /** Crea su vista y su servicio: el módulo se instancia solo cuando el usuario entra a él. */
+    public InventarioController(VistaConsola consola) {
+        this(consola, new InventarioVista(consola), new InventarioServicio());
+    }
+
     public InventarioController(VistaConsola consola, InventarioVista vista, InventarioServicio servicio) {
         super(consola, vista);
         this.vista = vista;

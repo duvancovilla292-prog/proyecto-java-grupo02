@@ -35,6 +35,11 @@
  */
 package com.carmotors.servicio;
 
+import com.carmotors.config.ConexionFactory;
+import com.carmotors.dao.jdbc.LoteDAOJdbc;
+import com.carmotors.dao.jdbc.ProveedorDAOJdbc;
+import com.carmotors.dao.jdbc.RepuestoDAOJdbc;
+import com.carmotors.dao.jdbc.TipoRepuestoDAOJdbc;
 import com.carmotors.dao.LoteDAO;
 import com.carmotors.dao.ProveedorDAO;
 import com.carmotors.dao.RepuestoDAO;
@@ -56,6 +61,13 @@ public class InventarioServicio {
     private final LoteDAO loteDAO;
     private final ProveedorDAO proveedorDAO;
     private final PublicadorInventario publicador; // sujeto del patrón Observer
+
+    /** Crea sus propios DAO JDBC y usa el publicador único de alertas (Observer). */
+    public InventarioServicio() {
+        this(new RepuestoDAOJdbc(ConexionFactory.getInstancia()), new TipoRepuestoDAOJdbc(ConexionFactory.getInstancia()),
+                new LoteDAOJdbc(ConexionFactory.getInstancia()), new ProveedorDAOJdbc(ConexionFactory.getInstancia()),
+                PublicadorInventario.getInstancia());
+    }
 
     public InventarioServicio(RepuestoDAO repuestoDAO, TipoRepuestoDAO tipoDAO, LoteDAO loteDAO,
                               ProveedorDAO proveedorDAO, PublicadorInventario publicador) {

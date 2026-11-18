@@ -36,6 +36,8 @@
  */
 package com.carmotors.servicio;
 
+import com.carmotors.config.ConexionFactory;
+import com.carmotors.dao.jdbc.ReporteDAOJdbc;
 import com.carmotors.dao.ReporteDAO;
 import com.carmotors.excepcion.DatoInvalidoException;
 import com.carmotors.modelo.reporte.AlertaStock;
@@ -82,6 +84,11 @@ public class ReporteServicio {
     };
 
     private final ReporteDAO reporteDAO;
+
+    /** Crea su propio DAO de reportes con la conexión del Singleton. */
+    public ReporteServicio() {
+        this(new ReporteDAOJdbc(ConexionFactory.getInstancia()));
+    }
 
     public ReporteServicio(ReporteDAO reporteDAO) {
         this.reporteDAO = reporteDAO;

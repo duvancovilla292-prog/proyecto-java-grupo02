@@ -36,6 +36,12 @@
  */
 package com.carmotors.servicio;
 
+import com.carmotors.config.ConexionFactory;
+import com.carmotors.dao.jdbc.CatalogoProveedorDAOJdbc;
+import com.carmotors.dao.jdbc.EvaluacionProveedorDAOJdbc;
+import com.carmotors.dao.jdbc.LoteDAOJdbc;
+import com.carmotors.dao.jdbc.ProveedorDAOJdbc;
+import com.carmotors.dao.jdbc.RepuestoDAOJdbc;
 import com.carmotors.dao.CatalogoProveedorDAO;
 import com.carmotors.dao.EvaluacionProveedorDAO;
 import com.carmotors.dao.LoteDAO;
@@ -62,6 +68,13 @@ public class ProveedorServicio {
     private final EvaluacionProveedorDAO evaluacionDAO;
     private final RepuestoDAO repuestoDAO;
     private final LoteDAO loteDAO;
+
+    /** Crea sus propios DAO JDBC con la conexión del Singleton. */
+    public ProveedorServicio() {
+        this(new ProveedorDAOJdbc(ConexionFactory.getInstancia()), new CatalogoProveedorDAOJdbc(ConexionFactory.getInstancia()),
+                new EvaluacionProveedorDAOJdbc(ConexionFactory.getInstancia()), new RepuestoDAOJdbc(ConexionFactory.getInstancia()),
+                new LoteDAOJdbc(ConexionFactory.getInstancia()));
+    }
 
     public ProveedorServicio(ProveedorDAO proveedorDAO, CatalogoProveedorDAO catalogoDAO,
                              EvaluacionProveedorDAO evaluacionDAO, RepuestoDAO repuestoDAO, LoteDAO loteDAO) {

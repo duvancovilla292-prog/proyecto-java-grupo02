@@ -31,6 +31,12 @@
  */
 package com.carmotors.servicio;
 
+import com.carmotors.config.ConexionFactory;
+import com.carmotors.dao.jdbc.AsignacionTecnicoDAOJdbc;
+import com.carmotors.dao.jdbc.DetalleRepuestoDAOJdbc;
+import com.carmotors.dao.jdbc.OrdenServicioDAOJdbc;
+import com.carmotors.dao.jdbc.TecnicoDAOJdbc;
+import com.carmotors.dao.jdbc.VehiculoDAOJdbc;
 import com.carmotors.dao.AsignacionTecnicoDAO;
 import com.carmotors.dao.DetalleRepuestoDAO;
 import com.carmotors.dao.OrdenServicioDAO;
@@ -61,6 +67,13 @@ public class OrdenServicioServicio {
     private final AsignacionTecnicoDAO asignacionDAO;
     private final DetalleRepuestoDAO detalleDAO;
     private final InventarioServicio inventario;  // colaborador para reservar/deducir
+
+    /** Crea sus propios DAO JDBC y el servicio de inventario con el que reserva/deduce stock. */
+    public OrdenServicioServicio() {
+        this(new OrdenServicioDAOJdbc(ConexionFactory.getInstancia()), new VehiculoDAOJdbc(ConexionFactory.getInstancia()),
+                new TecnicoDAOJdbc(ConexionFactory.getInstancia()), new AsignacionTecnicoDAOJdbc(ConexionFactory.getInstancia()),
+                new DetalleRepuestoDAOJdbc(ConexionFactory.getInstancia()), new InventarioServicio());
+    }
 
     public OrdenServicioServicio(OrdenServicioDAO ordenDAO, VehiculoDAO vehiculoDAO, TecnicoDAO tecnicoDAO,
                                  AsignacionTecnicoDAO asignacionDAO, DetalleRepuestoDAO detalleDAO,

@@ -34,6 +34,10 @@
  */
 package com.carmotors.servicio;
 
+import com.carmotors.config.ConexionFactory;
+import com.carmotors.dao.jdbc.ClienteDAOJdbc;
+import com.carmotors.dao.jdbc.OrdenServicioDAOJdbc;
+import com.carmotors.dao.jdbc.VehiculoDAOJdbc;
 import com.carmotors.dao.ClienteDAO;
 import com.carmotors.dao.OrdenServicioDAO;
 import com.carmotors.dao.VehiculoDAO;
@@ -50,6 +54,12 @@ public class ClienteServicio {
     private final ClienteDAO clienteDAO;
     private final VehiculoDAO vehiculoDAO;
     private final OrdenServicioDAO ordenDAO;
+
+    /** Crea sus propios DAO JDBC con la conexión del Singleton. */
+    public ClienteServicio() {
+        this(new ClienteDAOJdbc(ConexionFactory.getInstancia()), new VehiculoDAOJdbc(ConexionFactory.getInstancia()),
+                new OrdenServicioDAOJdbc(ConexionFactory.getInstancia()));
+    }
 
     public ClienteServicio(ClienteDAO clienteDAO, VehiculoDAO vehiculoDAO, OrdenServicioDAO ordenDAO) {
         this.clienteDAO = clienteDAO;

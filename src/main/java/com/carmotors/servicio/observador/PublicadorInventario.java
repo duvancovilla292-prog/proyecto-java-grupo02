@@ -2,7 +2,8 @@
  * ============================================================
  * Archivo: PublicadorInventario.java
  * Propósito: mantener la lista de observadores y avisarles de alertas de stock.
- * Conceptos clave: PATRÓN OBSERVER (sujeto), List/ArrayList (sesión 08),
+ * Conceptos clave: PATRÓN OBSERVER (sujeto) + SINGLETON (una sola lista
+ *            de observadores para toda la aplicación), List/ArrayList (sesión 08),
  *            for-each (sesión 03), try/catch por observador.
  * Justificación: igual que en S14Demo01, un observador que falla no debe
  *            impedir que los demás reciban el aviso ni romper la operación
@@ -28,7 +29,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PublicadorInventario {
+    // Única instancia: todos los InventarioServicio avisan a los mismos observadores.
+    private static PublicadorInventario instancia;
+
     private final List<ObservadorInventario> observadores = new ArrayList<>();
+
+    private PublicadorInventario() {
+    }
+
+    public static synchronized PublicadorInventario getInstancia() {
+        if (instancia == null) {
+            instancia = new PublicadorInventario();
+        }
+        return instancia;
+    }
 
     /** Agrega un observador; ignora null y duplicados. */
     public void suscribir(ObservadorInventario observador) {

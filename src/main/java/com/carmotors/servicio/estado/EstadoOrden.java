@@ -15,6 +15,7 @@
  */
 package com.carmotors.servicio.estado;
 
+import com.carmotors.excepcion.ReglaNegocioException;
 import com.carmotors.modelo.EstadoServicio;
 
 public interface EstadoOrden {
