@@ -1,0 +1,38 @@
+# ============================================================
+# .gitignore - CarMotors SGT
+# Excluye binarios, compilaciones, configuración de IDE, logs,
+# credenciales locales y archivos generados por la aplicación.
+# ============================================================
+
+# --- Compilación Maven / Java ---
+/target/
+target/
+out/
+bin/
+*.class
+*.jar
+*.war
+*.ear
+
+# --- IDEs ---
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.project
+.classpath
+nbproject/
+
+# --- Logs ---
+*.log
+logs/
+
+# --- Sistema operativo ---
+.DS_Store
+Thumbs.db
+
+
+# --- Facturas generadas en tiempo de ejecución ---
+facturas/
