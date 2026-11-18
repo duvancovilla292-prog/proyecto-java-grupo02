@@ -13,11 +13,16 @@
  *            actualizar, eliminar) más sus consultas específicas.
  *            Convención: buscarPor... devuelve null si no hay resultado
  *            (como Grupo.obtener de S08Demo04); el llamador lo comprueba.
+ * Visto en clase (demos del curso):
+ *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+ *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
+ *   - funciones de MySQL en el SQL (NOW, CURDATE, DATE_ADD, LAST_INSERT_ID) -> son SQL de MySQL, no Java; en Java solo se vio LocalDate.of (S12Demo02)
  * ============================================================
  */
 package com.carmotors.dao;
 
-import com.carmotors.modelo.CalendarioPreventivo;
 import com.carmotors.modelo.EstadoServicio;
 import com.carmotors.modelo.OrdenServicio;
 
@@ -38,12 +43,6 @@ public interface OrdenServicioDAO {
 
     /** Marca la orden como Entregada y registra la fecha de entrega (NOW() de MySQL). */
     int registrarEntrega(int id) throws SQLException;
-
-    /**
-     * Consulta específica: por vehículo, fecha del último preventivo terminado,
-     * próximo sugerido (+meses), hoy y límite de aviso (+dias), calculadas por MySQL.
-     */
-    List<CalendarioPreventivo> calendarioPreventivos(int meses, int dias) throws SQLException;
 
     /** Actualiza tipo de mantenimiento, descripción y costo de mano de obra. */
     int actualizar(OrdenServicio orden) throws SQLException;

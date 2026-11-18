@@ -13,6 +13,20 @@
  *            elimina duplicación (DRY). El controlador NO conoce los textos del
  *            menú: solo asocia número -> acción, así la vista concentra toda la
  *            interacción con el usuario.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+ *   - clase abstracta y métodos abstractos -> S07Demo03 Poliza (Sesión 07)
+ *   - modificador protected -> S07Demo00 Usuario.describirIdentidad (Sesión 07)
+ *   - operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
+ *   - Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - PATRÓN COMMAND -> S14Demo03 GestorComandos (Sesión 14)
+ *   - PATRÓN TEMPLATE METHOD (método final + hooks) -> S14Demo05 ProcesoReporte (Sesión 14)
+ *   - MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
  * ============================================================
  */
 package com.carmotors.controlador;

@@ -13,6 +13,17 @@
  *            Las credenciales van en constantes (forma vista en clase). Cada
  *            integrante ajusta DB_USER y DB_PASSWORD a su MySQL local.
  *            NOTA: en un proyecto real no se dejan claves en el código.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - métodos y miembros static -> S05Demo02ConversorTemperatura (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - synchronized (método static) -> S16Demo00 Numerador (Sesión 16)
+ *   - PATRÓN SINGLETON -> S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - ConexionFactory con DriverManager e isValid -> S18Demo01 ConexionFactory y S18Demo00UsuariosMain (Sesión 18)
  * ============================================================
  */
 package com.carmotors.config;

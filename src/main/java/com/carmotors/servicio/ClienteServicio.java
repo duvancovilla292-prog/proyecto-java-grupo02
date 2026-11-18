@@ -2,15 +2,34 @@
  * ============================================================
  * Archivo: ClienteServicio.java
  * Propósito: lógica del Módulo de Gestión de Clientes: perfiles,
- *            vehículos, historial de servicios y recordatorios de
- *            mantenimiento preventivo.
+ *            vehículos e historial de servicios (los recordatorios de
+ *            mantenimiento preventivo están en ReporteServicio).
  * Conceptos clave: capa de servicio, Streams (filter, map, sorted,
- *            anyMatch, toList), Map/HashMap para búsquedas por id
- *            (sesión 10). Las fechas del recordatorio las calcula MySQL
- *            (CalendarioPreventivo); aquí solo se aplica la regla.
+ *            anyMatch, toList).
  * Justificación: las validaciones de unicidad (documento, email, placa)
  *            se hacen ANTES de llamar al DAO para dar mensajes claros; la BD
  *            conserva las restricciones UNIQUE como respaldo.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+ *   - operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
+ *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
+ *   - break / continue -> S03DemoFor (Sesión 03)
+ *   - String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
+ *   - toUpperCase / toLowerCase / contains -> S10Demo00SetMain normalizar y S18Demo00 correo.contains (Sesiones 10 y 18)
+ *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+ *   - Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
+ *   - expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
+ *   - Predicate<T> / Comparator<T> / compareTo -> S19Demo03ReglasOrdenMain (Sesión 19)
+ *   - referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
+ *   - Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
+ *   - Stream: count / anyMatch / Arrays.stream -> S20Demo01FuentesMain (Sesión 20)
+ *   - Stream: distinct / sorted / mapToInt+sum / reduce(0, Integer::sum) -> S20Demo02OrdenesMain (Sesión 20)
  * ============================================================
  */
 package com.carmotors.servicio;
@@ -18,21 +37,14 @@ package com.carmotors.servicio;
 import com.carmotors.dao.ClienteDAO;
 import com.carmotors.dao.OrdenServicioDAO;
 import com.carmotors.dao.VehiculoDAO;
-import com.carmotors.excepcion.DatoInvalidoException;
 import com.carmotors.excepcion.RecursoNoEncontradoException;
 import com.carmotors.excepcion.ReglaNegocioException;
-import com.carmotors.modelo.CalendarioPreventivo;
 import com.carmotors.modelo.Cliente;
 import com.carmotors.modelo.OrdenServicio;
-import com.carmotors.modelo.RecordatorioMantenimiento;
-import com.carmotors.modelo.TipoMantenimiento;
 import com.carmotors.modelo.Vehiculo;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ClienteServicio {
     private final ClienteDAO clienteDAO;
@@ -104,47 +116,6 @@ public class ClienteServicio {
         return ordenDAO.listar().stream()
                 .filter(orden -> idsVehiculos.contains(orden.getVehiculoId()))
                 .sorted((a, b) -> b.getFechaRecepcion().compareTo(a.getFechaRecepcion()))
-                .toList();
-    }
-
-    /**
-     * Recordatorios automáticos: para cada vehículo toma su último
-     * mantenimiento PREVENTIVO terminado y suma "meses". Si esa fecha ya pasó
-     * o cae dentro de los próximos "diasAnticipacion", hay que notificar.
-     * Se omiten vehículos que ya tienen un preventivo abierto en el taller.
-     */
-    public List<RecordatorioMantenimiento> recordatoriosMantenimiento(int meses, int diasAnticipacion)
-            throws SQLException {
-        if (meses <= 0 || diasAnticipacion < 0) {
-            throw new DatoInvalidoException("Meses positivos y días de anticipación no negativos.");
-        }
-        List<OrdenServicio> preventivas = ordenDAO.listar().stream()
-                .filter(o -> o.getTipoMantenimiento() == TipoMantenimiento.PREVENTIVO)
-                .toList();
-        Map<Integer, Cliente> clientesPorId = new HashMap<>();
-        for (Cliente cliente : clienteDAO.listar()) {
-            clientesPorId.put(cliente.getId(), cliente);
-        }
-        Map<Integer, Vehiculo> vehiculosPorId = new HashMap<>();
-        for (Vehiculo vehiculo : vehiculoDAO.listar()) {
-            vehiculosPorId.put(vehiculo.getId(), vehiculo);
-        }
-        List<RecordatorioMantenimiento> recordatorios = new ArrayList<>();
-
-        // MySQL devuelve, por vehículo, el último preventivo, el próximo (+meses), hoy y el límite (+días).
-        for (CalendarioPreventivo calendario : ordenDAO.calendarioPreventivos(meses, diasAnticipacion)) {
-            int vehiculoId = calendario.getVehiculoId();
-            boolean tieneAbierto = preventivas.stream()
-                    .anyMatch(o -> o.getVehiculoId() == vehiculoId && !o.getEstado().trabajoTerminado());
-            if (tieneAbierto || !calendario.debeNotificarse()) {
-                continue;  // continue de la sesión 03
-            }
-            Vehiculo vehiculo = vehiculosPorId.get(vehiculoId);
-            recordatorios.add(new RecordatorioMantenimiento(clientesPorId.get(vehiculo.getClienteId()), vehiculo,
-                    calendario.getUltimo(), calendario.getProximo(), calendario.estaVencido()));
-        }
-        return recordatorios.stream()
-                .sorted((a, b) -> a.getProximoPreventivo().compareTo(b.getProximoPreventivo()))
                 .toList();
     }
 

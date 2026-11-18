@@ -9,6 +9,11 @@
  * Justificación: a diferencia de Runnable, permite lanzar SQLException e
  *            IOException; así cada acción delega el manejo de errores en
  *            un único lugar (ControladorBase) en vez de repetir try/catch.
+ * Visto en clase (demos del curso):
+ *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - PATRÓN COMMAND -> S14Demo03 GestorComandos (Sesión 14)
+ *   - interfaz funcional @FunctionalInterface -> S19Demo00 ReglaMonto (Sesión 19)
  * ============================================================
  */
 package com.carmotors.controlador;

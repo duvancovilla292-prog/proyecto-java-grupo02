@@ -7,6 +7,13 @@
  * Justificación: evita repetir en 13 DAO el mismo código para recuperar
  *            el id autogenerado y para borrar por id (principio DRY). LAST_INSERT_ID() es por
  *            conexión, por eso se consulta con la MISMA conexión del INSERT.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - métodos y miembros static -> S05Demo02ConversorTemperatura (Sesión 05)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - JDBC: Connection, PreparedStatement, ResultSet, try-with-resources -> S18Demo01 UsuarioDAO (Sesión 18)
+ *   - funciones de MySQL en el SQL (NOW, CURDATE, DATE_ADD, LAST_INSERT_ID) -> son SQL de MySQL, no Java; en Java solo se vio LocalDate.of (S12Demo02)
  * ============================================================
  */
 package com.carmotors.dao.jdbc;

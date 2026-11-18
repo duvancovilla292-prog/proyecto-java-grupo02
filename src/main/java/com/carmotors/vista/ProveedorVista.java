@@ -2,20 +2,32 @@
  * ============================================================
  * Archivo: ProveedorVista.java
  * Propósito: menú y presentación del Módulo de Proveedores: proveedores,
- *            catálogos, evaluaciones y ranking.
+ *            catálogos y evaluaciones.
  * Conceptos clave: MVC - Vista, implementa VistaMenu, composición con
- *            VistaConsola, TEMPLATE METHOD (ReporteDesempenoProveedores).
+ *            VistaConsola.
  * Justificación: mantiene el formato de proveedores fuera del controlador
  *            y del servicio (SRP).
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+ *   - @Override y polimorfismo -> S07Demo01 EnvioExpress y S07Demo02PolimorfismoMain (Sesión 07)
+ *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
+ *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
+ *   - conversiones: Integer.parseInt, String.valueOf, cast (int)/(double) -> S04DemoConversiones (Sesión 04) y S08Demo00 cast (double) (Sesión 08)
+ *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+ *   - List.of / List.copyOf -> S19Demo03ReglasOrdenMain List.of y S20Demo02 Orden List.copyOf (Sesiones 19 y 20)
+ *   - Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
+ *   - MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
  * ============================================================
  */
 package com.carmotors.vista;
 
-import com.carmotors.modelo.DesempenoProveedor;
 import com.carmotors.modelo.EvaluacionProveedor;
 import com.carmotors.modelo.ProductoCatalogo;
 import com.carmotors.modelo.Proveedor;
-import com.carmotors.vista.reporte.ReporteDesempenoProveedores;
 
 import java.util.List;
 import java.util.Map;
@@ -33,8 +45,7 @@ public class ProveedorVista implements VistaMenu {
             "Evaluar proveedor (calidad y puntualidad)",
             "Ver evaluaciones de un proveedor",
             "Corregir evaluación",
-            "Eliminar evaluación",
-            "Ranking de desempeño");
+            "Eliminar evaluación");
 
     private final VistaConsola consola;
 
@@ -93,7 +104,4 @@ public class ProveedorVista implements VistaMenu {
         }
     }
 
-    public void mostrarRanking(List<DesempenoProveedor> ranking) {
-        consola.mostrarLineas(new ReporteDesempenoProveedores(ranking).generar());
-    }
 }

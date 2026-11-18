@@ -12,6 +12,21 @@
  *            (XxxDAOJdbc, ImpuestoIva...). El resto del sistema depende de
  *            interfaces (DIP): cambiar MySQL por otro almacenamiento o la
  *            política de impuestos se hace aquí, sin tocar servicios ni vistas.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - métodos y miembros static -> S05Demo02ConversorTemperatura (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - Scanner y hasNextLine -> S03Scanner (Sesión 03) y S18Demo01 VistaConsola (Sesión 18)
+ *   - arreglos y split -> S08Demo00ArreglosMain (Sesión 08) y S17Demo02LecturaMain split (Sesión 17)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - PATRÓN SINGLETON -> S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - PATRÓN FACADE -> S13Demo01 CheckoutFacade (Sesión 13)
+ *   - PATRÓN OBSERVER -> S14Demo01 PublicadorPedidos (Sesión 14)
+ *   - Path / Files / BufferedWriter / StandardOpenOption -> S17Demo00RutasMain, S17Demo01EscrituraMain y S17Demo03GestionMain (Sesión 17)
+ *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
+ *   - MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
+ *   - referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
  * ============================================================
  */
 package com.carmotors;
@@ -23,6 +38,7 @@ import com.carmotors.controlador.InventarioController;
 import com.carmotors.controlador.MenuPrincipalController;
 import com.carmotors.controlador.OrdenServicioController;
 import com.carmotors.controlador.ProveedorController;
+import com.carmotors.controlador.ReporteController;
 import com.carmotors.dao.AsignacionTecnicoDAO;
 import com.carmotors.dao.ClienteDAO;
 import com.carmotors.dao.DetalleRepuestoDAO;
@@ -41,6 +57,7 @@ import com.carmotors.dao.jdbc.FacturaDAOJdbc;
 import com.carmotors.dao.jdbc.LoteDAOJdbc;
 import com.carmotors.dao.jdbc.OrdenServicioDAOJdbc;
 import com.carmotors.dao.jdbc.ProveedorDAOJdbc;
+import com.carmotors.dao.jdbc.ReporteDAOJdbc;
 import com.carmotors.dao.jdbc.RepuestoDAOJdbc;
 import com.carmotors.dao.jdbc.TecnicoDAOJdbc;
 import com.carmotors.dao.jdbc.TipoRepuestoDAOJdbc;
@@ -62,6 +79,7 @@ import com.carmotors.vista.InventarioVista;
 import com.carmotors.vista.MenuPrincipal;
 import com.carmotors.vista.OrdenServicioVista;
 import com.carmotors.vista.ProveedorVista;
+import com.carmotors.vista.ReporteVista;
 import com.carmotors.vista.VistaConsola;
 
 import java.nio.file.Path;
@@ -123,8 +141,7 @@ public class Main {
                     new EvaluacionProveedorDAOJdbc(conexion), repuestoDAO, loteDAO);
             FacturacionServicio facturacion = new FacturacionServicio(new FacturaDAOJdbc(conexion), clienteDAO,
                     ordenes, new ImpuestoIva(IVA_COLOMBIA), CARPETA_FACTURAS);  // Strategy elegida
-            ReporteServicio reportes = new ReporteServicio(ordenDAO, detalleDAO, tecnicoDAO, asignacionDAO,
-                    repuestoDAO);
+            ReporteServicio reportes = new ReporteServicio(new ReporteDAOJdbc(conexion));
 
             // 5) Controladores con sus vistas, y menú principal.
             MenuPrincipalController menu = new MenuPrincipalController(consola, menuPrincipal,
@@ -132,8 +149,9 @@ public class Main {
                     new OrdenServicioController(consola, new OrdenServicioVista(consola), ordenes,
                             new TallerFacade(clientes, ordenes)),  // Facade
                     new ClienteController(consola, new ClienteVista(consola), clientes),
-                    new FacturacionController(consola, new FacturacionVista(consola), facturacion, reportes),
-                    new ProveedorController(consola, new ProveedorVista(consola), proveedores));
+                    new FacturacionController(consola, new FacturacionVista(consola), facturacion),
+                    new ProveedorController(consola, new ProveedorVista(consola), proveedores),
+                    new ReporteController(consola, new ReporteVista(consola), reportes));
             menu.iniciar();  // bienvenida -> menú -> despedida (Template Method con hooks)
         }
     }

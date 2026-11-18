@@ -12,6 +12,13 @@
  *            coordina ClienteServicio y OrdenServicioServicio sin duplicar sus
  *            reglas: cada servicio sigue validando lo suyo (SRP), y quien usa la
  *            fachada no necesita conocer el orden de los pasos.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - PATRÓN FACADE -> S13Demo01 CheckoutFacade (Sesión 13)
  * ============================================================
  */
 package com.carmotors.servicio;

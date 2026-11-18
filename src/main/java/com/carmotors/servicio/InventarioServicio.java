@@ -2,15 +2,35 @@
  * ============================================================
  * Archivo: InventarioServicio.java
  * Propósito: lógica de negocio del Módulo de Gestión de Inventario:
- *            registro de repuestos, ingreso de lotes, búsqueda, alertas
- *            y las reglas RESERVAR / DEDUCIR stock.
+ *            registro de repuestos, ingreso de lotes, búsqueda, alertas en
+ *            tiempo real y las reglas RESERVAR / DEDUCIR stock (el reporte
+ *            de alertas está en ReporteServicio).
  * Conceptos clave: capa de servicio, inyección de dependencias por
  *            constructor, Streams (filter, sorted, toList - sesión 20),
- *            Predicate y Comparator declarados como constantes (S19Demo03),
  *            PATRÓN OBSERVER (publica alertas).
  * Justificación: es la única clase que modifica cantidades de stock.
  *            Las órdenes de servicio no tocan RepuestoDAO directamente: piden
  *            reservar/deducir aquí, de modo que la regla vive en un solo lugar (SRP).
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+ *   - operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
+ *   - String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
+ *   - toUpperCase / toLowerCase / contains -> S10Demo00SetMain normalizar y S18Demo00 correo.contains (Sesiones 10 y 18)
+ *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - PATRÓN OBSERVER -> S14Demo01 PublicadorPedidos (Sesión 14)
+ *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
+ *   - expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
+ *   - Predicate<T> / Comparator<T> / compareTo -> S19Demo03ReglasOrdenMain (Sesión 19)
+ *   - referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
+ *   - Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
+ *   - Stream: count / anyMatch / Arrays.stream -> S20Demo01FuentesMain (Sesión 20)
+ *   - Stream: distinct / sorted / mapToInt+sum / reduce(0, Integer::sum) -> S20Demo02OrdenesMain (Sesión 20)
+ *   - funciones de MySQL en el SQL (NOW, CURDATE, DATE_ADD, LAST_INSERT_ID) -> son SQL de MySQL, no Java; en Java solo se vio LocalDate.of (S12Demo02)
  * ============================================================
  */
 package com.carmotors.servicio;
@@ -28,19 +48,9 @@ import com.carmotors.modelo.TipoRepuesto;
 import com.carmotors.servicio.observador.PublicadorInventario;
 
 import java.sql.SQLException;
-import java.util.Comparator;
 import java.util.List;
-import java.util.function.Predicate;
 
 public class InventarioServicio {
-    // Reglas reutilizables declaradas con su interfaz funcional (sesión 19).
-    private static final Predicate<Repuesto> BAJO_MINIMO = Repuesto::estaBajoMinimo;
-    // Más crítico primero: el que está más por debajo de su mínimo.
-    private static final Comparator<Repuesto> POR_CRITICIDAD = (a, b) -> Integer.compare(
-            a.getDisponible() - a.getStockMinimo(), b.getDisponible() - b.getStockMinimo());
-    // El lote que caduca antes va primero.
-    private static final Comparator<Lote> POR_CADUCIDAD = (a, b) -> a.getFechaCaducidad().compareTo(b.getFechaCaducidad());
-
     private final RepuestoDAO repuestoDAO;
     private final TipoRepuestoDAO tipoDAO;
     private final LoteDAO loteDAO;
@@ -131,25 +141,6 @@ public class InventarioServicio {
 
     public List<Lote> listarLotes(int repuestoId) throws SQLException {
         return loteDAO.listarPorRepuesto(repuestoId);
-    }
-
-    /** Alerta 1: repuestos cuyo disponible está por debajo del mínimo, del más crítico al menos crítico. */
-    public List<Repuesto> repuestosBajoMinimo() throws SQLException {
-        return repuestoDAO.listar().stream()
-                .filter(BAJO_MINIMO)
-                .sorted(POR_CRITICIDAD)
-                .toList();
-    }
-
-    /** Alerta 2: lotes que caducan dentro de los próximos "dias" (o ya caducaron). */
-    public List<Lote> lotesPorVencer(int dias) throws SQLException {
-        if (dias < 0) {
-            throw new DatoInvalidoException("Los días de anticipación no pueden ser negativos.");
-        }
-        // La fecha límite (hoy + días) la calcula MySQL dentro de la consulta del DAO.
-        return loteDAO.listarPorVencer(dias).stream()
-                .sorted(POR_CADUCIDAD)
-                .toList();
     }
 
     /** Comprueba que hay unidades libres SIN modificar nada (validación previa). */

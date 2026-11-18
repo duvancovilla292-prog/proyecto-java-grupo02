@@ -6,6 +6,11 @@
  *            herencia (sesión 07), @Serial serialVersionUID.
  * Justificación: el arranque de la aplicación la atrapa para explicar que deben completarse
  *            las constantes de conexión en lugar de mostrar un error técnico.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - herencia extends / super(...) -> S07Demo00 Estudiante extends Usuario (Sesión 07)
+ *   - excepción propia + @Serial serialVersionUID -> S10Demo03 DatoObligatorioException (Sesión 10)
  * ============================================================
  */
 package com.carmotors.excepcion;

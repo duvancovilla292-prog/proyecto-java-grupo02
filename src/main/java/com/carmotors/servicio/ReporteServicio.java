@@ -1,48 +1,67 @@
 /*
  * ============================================================
  * Archivo: ReporteServicio.java
- * Propósito: calcular los reportes gerenciales: servicios más solicitados,
- *            productividad por técnico y análisis de consumo de repuestos.
- * Conceptos clave: capa de servicio, API Stream (filter, map, distinct,
- *            sorted con Comparator, count, mapToInt + sum, reduce - sesión 20),
- *            lambdas y referencias a método, Comparator declarado (sesión 19),
- *            Set/HashSet para ids sin duplicados (sesión 10).
- * Justificación: aquí solo se CALCULA (agrupar, contar, sumar, ordenar) y se
- *            devuelven objetos del modelo; la presentación la hacen las clases
- *            de vista/reporte (Template Method). Los agrupamientos se hacen con
- *            distinct + filter + count, operaciones vistas en clase.
+ * Propósito: lógica del Módulo de Reportes: servicios más solicitados,
+ *            productividad por técnico, consumo de repuestos, alertas de
+ *            inventario, recordatorios de mantenimiento preventivo y
+ *            desempeño de proveedores.
+ * Conceptos clave: capa de servicio, API Stream (filter, map,
+ *            sorted con Comparator, toList - sesión 20), lambdas y referencias
+ *            a método, Comparator declarado (sesión 19).
+ * Justificación: depende solo de ReporteDAO (Inversión de Dependencias):
+ *            MySQL agrupa y suma, y aquí se aplican las REGLAS de negocio
+ *            (validar parámetros, ordenar rankings, top N, filtrar a quién
+ *            notificar). Devuelve objetos de modelo.reporte; la presentación
+ *            la hace ReporteVista y el flujo lo coordina ReporteController.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+ *   - operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
+ *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
+ *   - break / continue -> S03DemoFor (Sesión 03)
+ *   - String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
+ *   - conversiones: Integer.parseInt, String.valueOf, cast (int)/(double) -> S04DemoConversiones (Sesión 04) y S08Demo00 cast (double) (Sesión 08)
+ *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
+ *   - expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
+ *   - Predicate<T> / Comparator<T> / compareTo -> S19Demo03ReglasOrdenMain (Sesión 19)
+ *   - referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
+ *   - Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
+ *   - Stream: distinct / sorted / mapToInt+sum / reduce(0, Integer::sum) -> S20Demo02OrdenesMain (Sesión 20)
  * ============================================================
  */
 package com.carmotors.servicio;
 
-import com.carmotors.dao.AsignacionTecnicoDAO;
-import com.carmotors.dao.DetalleRepuestoDAO;
-import com.carmotors.dao.OrdenServicioDAO;
-import com.carmotors.dao.RepuestoDAO;
-import com.carmotors.dao.TecnicoDAO;
-import com.carmotors.modelo.AsignacionTecnico;
-import com.carmotors.modelo.ConsumoRepuesto;
-import com.carmotors.modelo.DetalleRepuesto;
-import com.carmotors.modelo.EstadoReserva;
-import com.carmotors.modelo.OrdenServicio;
-import com.carmotors.modelo.ProductividadTecnico;
-import com.carmotors.modelo.Repuesto;
-import com.carmotors.modelo.ResumenDescripcion;
-import com.carmotors.modelo.ResumenTipoServicio;
-import com.carmotors.modelo.TipoMantenimiento;
+import com.carmotors.dao.ReporteDAO;
+import com.carmotors.excepcion.DatoInvalidoException;
+import com.carmotors.modelo.reporte.AlertaStock;
+import com.carmotors.modelo.reporte.CalendarioPreventivo;
+import com.carmotors.modelo.reporte.ConsumoRepuesto;
+import com.carmotors.modelo.reporte.DesempenoProveedor;
+import com.carmotors.modelo.reporte.LotePorVencer;
+import com.carmotors.modelo.reporte.ProductividadTecnico;
+import com.carmotors.modelo.reporte.RecordatorioMantenimiento;
+import com.carmotors.modelo.reporte.ResumenDescripcion;
+import com.carmotors.modelo.reporte.ResumenTipoServicio;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class ReporteServicio {
     // Más solicitados primero.
     private static final Comparator<ResumenTipoServicio> POR_SOLICITUDES =
             (a, b) -> Integer.compare(b.getSolicitudes(), a.getSolicitudes());
+    // Más repetida primero; desempate alfabético.
+    private static final Comparator<ResumenDescripcion> POR_CANTIDAD = (a, b) -> {
+        int porCantidad = Integer.compare(b.getCantidad(), a.getCantidad());
+        return porCantidad != 0 ? porCantidad : a.getDescripcion().compareTo(b.getDescripcion());
+    };
     // Más terminadas primero; desempata por mano de obra.
     private static final Comparator<ProductividadTecnico> POR_PRODUCTIVIDAD = (a, b) -> {
         int porTerminadas = Integer.compare(b.getTerminadas(), a.getTerminadas());
@@ -50,49 +69,40 @@ public class ReporteServicio {
     };
     // Más consumido primero.
     private static final Comparator<ConsumoRepuesto> POR_CONSUMO = (a, b) -> Integer.compare(b.getUsadas(), a.getUsadas());
+    // Más crítico primero: el que está más por debajo de su mínimo.
+    private static final Comparator<AlertaStock> POR_CRITICIDAD = (a, b) -> Integer.compare(a.holgura(), b.holgura());
+    // El que vence antes va primero.
+    private static final Comparator<RecordatorioMantenimiento> POR_PROXIMO =
+            (a, b) -> a.getProximoPreventivo().compareTo(b.getProximoPreventivo());
+    // Mayor puntaje primero; desempate alfabético.
+    private static final Comparator<DesempenoProveedor> POR_PUNTAJE = (a, b) -> {
+        // Puntaje con una cifra decimal convertido a entero (cast de S04) para comparar con Integer.compare.
+        int porPuntaje = Integer.compare((int) (b.puntajeGeneral() * 10), (int) (a.puntajeGeneral() * 10));
+        return porPuntaje != 0 ? porPuntaje : a.getProveedor().getNombre().compareTo(b.getProveedor().getNombre());
+    };
 
-    private final OrdenServicioDAO ordenDAO;
-    private final DetalleRepuestoDAO detalleDAO;
-    private final TecnicoDAO tecnicoDAO;
-    private final AsignacionTecnicoDAO asignacionDAO;
-    private final RepuestoDAO repuestoDAO;
+    private final ReporteDAO reporteDAO;
 
-    public ReporteServicio(OrdenServicioDAO ordenDAO, DetalleRepuestoDAO detalleDAO, TecnicoDAO tecnicoDAO,
-                           AsignacionTecnicoDAO asignacionDAO, RepuestoDAO repuestoDAO) {
-        this.ordenDAO = ordenDAO;
-        this.detalleDAO = detalleDAO;
-        this.tecnicoDAO = tecnicoDAO;
-        this.asignacionDAO = asignacionDAO;
-        this.repuestoDAO = repuestoDAO;
+    public ReporteServicio(ReporteDAO reporteDAO) {
+        this.reporteDAO = reporteDAO;
     }
 
     // ------------------------------------------------------------ Servicios más solicitados
 
     /** Un resumen por tipo de mantenimiento, del más solicitado al menos solicitado. */
     public List<ResumenTipoServicio> serviciosPorTipo() throws SQLException {
-        List<OrdenServicio> ordenes = ordenDAO.listar();
-        List<DetalleRepuesto> detalles = detalleDAO.listar();
-        return Arrays.stream(TipoMantenimiento.values())
-                .map(tipo -> new ResumenTipoServicio(tipo,
-                        (int) ordenes.stream().filter(o -> o.getTipoMantenimiento() == tipo).count(),
-                        manoObraTerminada(ordenes, tipo),
-                        ventaRepuestos(ordenes, detalles, tipo)))
+        return reporteDAO.resumenPorTipo().stream()
                 .sorted(POR_SOLICITUDES)
                 .toList();
     }
 
     /** Las "maximo" descripciones de trabajo más repetidas (desempate alfabético). */
     public List<ResumenDescripcion> serviciosPorDescripcion(int maximo) throws SQLException {
-        List<OrdenServicio> ordenes = ordenDAO.listar();
-        List<ResumenDescripcion> todas = ordenes.stream()
-                .map(o -> o.getDescripcionProblema().toLowerCase())
-                .distinct()
-                .map(d -> new ResumenDescripcion(d, (int) ordenes.stream()
-                        .filter(o -> o.getDescripcionProblema().equalsIgnoreCase(d)).count()))
-                .sorted((a, b) -> {
-                    int porCantidad = Integer.compare(b.getCantidad(), a.getCantidad());
-                    return porCantidad != 0 ? porCantidad : a.getDescripcion().compareTo(b.getDescripcion());
-                })
+        if (maximo <= 0) {
+            throw new DatoInvalidoException("El top de descripciones debe ser positivo.");
+        }
+        List<ResumenDescripcion> todas = reporteDAO.resumenPorDescripcion().stream()
+                .sorted(POR_CANTIDAD)
                 .toList();
         List<ResumenDescripcion> primeras = new ArrayList<>();
         for (ResumenDescripcion resumen : todas) {
@@ -104,24 +114,6 @@ public class ReporteServicio {
         return primeras;
     }
 
-    private int manoObraTerminada(List<OrdenServicio> ordenes, TipoMantenimiento tipo) {
-        return ordenes.stream()
-                .filter(o -> o.getTipoMantenimiento() == tipo && o.getEstado().trabajoTerminado())
-                .map(OrdenServicio::getCostoManoObra)
-                .reduce(0, Integer::sum);
-    }
-
-    private int ventaRepuestos(List<OrdenServicio> ordenes, List<DetalleRepuesto> detalles, TipoMantenimiento tipo) {
-        Set<Integer> idsDelTipo = new HashSet<>(ordenes.stream()
-                .filter(o -> o.getTipoMantenimiento() == tipo)
-                .map(OrdenServicio::getId)
-                .toList());
-        return detalles.stream()
-                .filter(d -> d.getEstado() == EstadoReserva.DEDUCIDO && idsDelTipo.contains(d.getServicioId()))
-                .map(DetalleRepuesto::subtotal)
-                .reduce(0, Integer::sum);
-    }
-
     // ------------------------------------------------------------ Productividad por técnico
 
     /**
@@ -130,24 +122,7 @@ public class ReporteServicio {
      * Orden: más terminadas primero; desempata por mano de obra.
      */
     public List<ProductividadTecnico> productividadTecnicos() throws SQLException {
-        List<OrdenServicio> ordenes = ordenDAO.listar();
-        List<AsignacionTecnico> asignaciones = asignacionDAO.listar();
-        return tecnicoDAO.listar().stream()
-                .map(tecnico -> {
-                    // Set: un técnico cuenta cada orden una sola vez.
-                    Set<Integer> ids = new HashSet<>(asignaciones.stream()
-                            .filter(a -> a.getTecnicoId() == tecnico.getId())
-                            .map(AsignacionTecnico::getServicioId)
-                            .toList());
-                    List<OrdenServicio> propias = ordenes.stream().filter(o -> ids.contains(o.getId())).toList();
-                    int terminadas = (int) propias.stream().filter(o -> o.getEstado().trabajoTerminado()).count();
-                    int manoObra = propias.stream()
-                            .filter(o -> o.getEstado().trabajoTerminado())
-                            .map(o -> o.getCostoManoObra()
-                                    / (int) asignaciones.stream().filter(a -> a.getServicioId() == o.getId()).count())
-                            .reduce(0, Integer::sum);
-                    return new ProductividadTecnico(tecnico, terminadas, propias.size() - terminadas, manoObra);
-                })
+        return reporteDAO.productividadTecnicos().stream()
                 .sorted(POR_PRODUCTIVIDAD)
                 .toList();
     }
@@ -156,27 +131,56 @@ public class ReporteServicio {
 
     /** Repuestos con movimiento (usados o reservados), del más consumido al menos consumido. */
     public List<ConsumoRepuesto> consumoRepuestos() throws SQLException {
-        List<DetalleRepuesto> detalles = detalleDAO.listar();
-        List<Repuesto> repuestos = repuestoDAO.listar();
-        return repuestos.stream()
-                .map(r -> {
-                    int usadas = unidades(detalles, r, EstadoReserva.DEDUCIDO);
-                    int ingreso = detalles.stream()
-                            .filter(d -> d.getRepuestoId() == r.getId() && d.getEstado() == EstadoReserva.DEDUCIDO)
-                            .map(DetalleRepuesto::subtotal)
-                            .reduce(0, Integer::sum);
-                    return new ConsumoRepuesto(r, usadas, unidades(detalles, r, EstadoReserva.RESERVADO), ingreso,
-                            ingreso - usadas * r.getPrecioCompra());
-                })
-                .filter(c -> c.getUsadas() > 0 || c.getReservadas() > 0)
+        return reporteDAO.consumoRepuestos().stream()
+                .filter(ConsumoRepuesto::tuvoMovimiento)
                 .sorted(POR_CONSUMO)
                 .toList();
     }
 
-    private int unidades(List<DetalleRepuesto> detalles, Repuesto repuesto, EstadoReserva estado) {
-        return detalles.stream()
-                .filter(d -> d.getRepuestoId() == repuesto.getId() && d.getEstado() == estado)
-                .mapToInt(DetalleRepuesto::getCantidad)
-                .sum();
+    // ------------------------------------------------------------ Alertas de inventario
+
+    /** Alerta 1: repuestos cuyo disponible está por debajo del mínimo, del más crítico al menos crítico. */
+    public List<AlertaStock> repuestosBajoMinimo() throws SQLException {
+        return reporteDAO.repuestosBajoMinimo().stream()
+                .sorted(POR_CRITICIDAD)
+                .toList();
+    }
+
+    /** Alerta 2: lotes que caducan dentro de los próximos "dias" (o ya caducaron), el más próximo primero. */
+    public List<LotePorVencer> lotesPorVencer(int dias) throws SQLException {
+        if (dias < 0) {
+            throw new DatoInvalidoException("Los días de anticipación no pueden ser negativos.");
+        }
+        // La fecha límite (hoy + días) y el orden por caducidad los resuelve MySQL en el DAO.
+        return reporteDAO.lotesPorVencer(dias);
+    }
+
+    // ------------------------------------------------------------ Recordatorios preventivos
+
+    /**
+     * Clientes a notificar: vehículos cuyo próximo preventivo (último + meses)
+     * ya venció o vence en los próximos "diasAnticipacion" días, y que no
+     * tienen ya un preventivo abierto.
+     */
+    public List<RecordatorioMantenimiento> recordatoriosMantenimiento(int meses, int diasAnticipacion)
+            throws SQLException {
+        if (meses <= 0 || diasAnticipacion < 0) {
+            throw new DatoInvalidoException("Meses positivos y días de anticipación no negativos.");
+        }
+        return reporteDAO.calendarioPreventivos(meses, diasAnticipacion).stream()
+                .filter(CalendarioPreventivo::debeNotificarse)
+                .map(c -> new RecordatorioMantenimiento(c.getCliente(), c.getVehiculo(), c.getUltimo(),
+                        c.getProximo(), c.estaVencido()))
+                .sorted(POR_PROXIMO)
+                .toList();
+    }
+
+    // ------------------------------------------------------------ Desempeño de proveedores
+
+    /** Ranking de proveedores por puntaje (promedio de calidad y puntualidad). */
+    public List<DesempenoProveedor> desempenoProveedores() throws SQLException {
+        return reporteDAO.desempenoProveedores().stream()
+                .sorted(POR_PUNTAJE)
+                .toList();
     }
 }

@@ -1,29 +1,39 @@
 /*
  * ============================================================
  * Archivo: FacturacionVista.java
- * Propósito: menú y presentación del Módulo de Facturación y Reportes:
- *            listado de facturas, TEXTO de la factura detallada y reportes
- *            gerenciales.
+ * Propósito: menú y presentación del Módulo de Facturación:
+ *            listado de facturas y TEXTO de la factura detallada.
  * Conceptos clave: MVC - Vista, implementa VistaMenu, Streams (map + toList,
- *            reduce), TEMPLATE METHOD (reportes en vista/reporte).
+ *            reduce).
  * Justificación: armar las líneas de la factura es PRESENTACIÓN; por eso se
  *            hace aquí. El controlador entrega esas líneas a
  *            FacturacionServicio, que es quien las guarda en el archivo .txt.
  *            Así la vista no escribe en disco y el servicio no da formato.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+ *   - @Override y polimorfismo -> S07Demo01 EnvioExpress y S07Demo02PolimorfismoMain (Sesión 07)
+ *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
+ *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
+ *   - conversiones: Integer.parseInt, String.valueOf, cast (int)/(double) -> S04DemoConversiones (Sesión 04) y S08Demo00 cast (double) (Sesión 08)
+ *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+ *   - List.of / List.copyOf -> S19Demo03ReglasOrdenMain List.of y S20Demo02 Orden List.copyOf (Sesiones 19 y 20)
+ *   - Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
+ *   - MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
+ *   - expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
+ *   - referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
+ *   - Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
+ *   - Stream: distinct / sorted / mapToInt+sum / reduce(0, Integer::sum) -> S20Demo02OrdenesMain (Sesión 20)
  * ============================================================
  */
 package com.carmotors.vista;
 
-import com.carmotors.modelo.ConsumoRepuesto;
 import com.carmotors.modelo.Factura;
 import com.carmotors.modelo.FacturaDetallada;
-import com.carmotors.modelo.ProductividadTecnico;
-import com.carmotors.modelo.ResumenDescripcion;
-import com.carmotors.modelo.ResumenTipoServicio;
 import com.carmotors.modelo.Tecnico;
-import com.carmotors.vista.reporte.ReporteConsumoRepuestos;
-import com.carmotors.vista.reporte.ReporteProductividadTecnicos;
-import com.carmotors.vista.reporte.ReporteServiciosSolicitados;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +46,7 @@ public class FacturacionVista implements VistaMenu {
             "Facturar orden completada",
             "Listar facturas",
             "Ver factura de una orden",
-            "Exportar factura a archivo .txt",
-            "Reporte: servicios más solicitados",
-            "Reporte: productividad por técnico",
-            "Reporte: consumo de repuestos");
+            "Exportar factura a archivo .txt");
 
     private final VistaConsola consola;
 
@@ -49,7 +56,7 @@ public class FacturacionVista implements VistaMenu {
 
     @Override
     public String titulo() {
-        return "Facturación y reportes";
+        return "Facturación";
     }
 
     @Override
@@ -137,18 +144,6 @@ public class FacturacionVista implements VistaMenu {
 
     public void mostrarFactura(List<String> lineas) {
         consola.mostrarLineas(lineas);
-    }
-
-    public void mostrarServiciosSolicitados(List<ResumenTipoServicio> porTipo, List<ResumenDescripcion> porDescripcion) {
-        consola.mostrarLineas(new ReporteServiciosSolicitados(porTipo, porDescripcion).generar());
-    }
-
-    public void mostrarProductividad(List<ProductividadTecnico> filas) {
-        consola.mostrarLineas(new ReporteProductividadTecnicos(filas).generar());
-    }
-
-    public void mostrarConsumo(List<ConsumoRepuesto> filas) {
-        consola.mostrarLineas(new ReporteConsumoRepuestos(filas).generar());
     }
 
     private String fila(String etiqueta, int valor) {

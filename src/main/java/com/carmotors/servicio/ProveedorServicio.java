@@ -2,15 +2,36 @@
  * ============================================================
  * Archivo: ProveedorServicio.java
  * Propósito: lógica del Módulo de Gestión de Proveedores: registro,
- *            catálogo de productos con costos, evaluación de desempeño
- *            y ranking.
+ *            catálogo de productos con costos y evaluación de desempeño
+ *            (el ranking de desempeño está en ReporteServicio).
  * Conceptos clave: Streams (filter, mapToInt, sum, count, sorted, anyMatch),
  *            Comparator declarado como constante y Set (HashSet) para evitar
  *            duplicados (sesiones 10 y 19),
  *            Comparator con desempate (S19Demo03), división decimal.
- * Justificación: el ranking se calcula en memoria a partir de las
- *            evaluaciones individuales; así se responde "¿qué proveedor
- *            ofrece mejores productos y precios?" sin lógica en la vista.
+ * Justificación: registra las evaluaciones individuales que luego resume
+ *            el Módulo de Reportes para responder "¿qué proveedor ofrece
+ *            mejores productos y precios?" sin lógica en la vista.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+ *   - operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
+ *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
+ *   - toUpperCase / toLowerCase / contains -> S10Demo00SetMain normalizar y S18Demo00 correo.contains (Sesiones 10 y 18)
+ *   - conversiones: Integer.parseInt, String.valueOf, cast (int)/(double) -> S04DemoConversiones (Sesión 04) y S08Demo00 cast (double) (Sesión 08)
+ *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+ *   - Set / HashSet -> S10Demo00SetMain (Sesión 10)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
+ *   - expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
+ *   - Predicate<T> / Comparator<T> / compareTo -> S19Demo03ReglasOrdenMain (Sesión 19)
+ *   - referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
+ *   - Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
+ *   - Stream: count / anyMatch / Arrays.stream -> S20Demo01FuentesMain (Sesión 20)
+ *   - Stream: distinct / sorted / mapToInt+sum / reduce(0, Integer::sum) -> S20Demo02OrdenesMain (Sesión 20)
+ *   - funciones de MySQL en el SQL (NOW, CURDATE, DATE_ADD, LAST_INSERT_ID) -> son SQL de MySQL, no Java; en Java solo se vio LocalDate.of (S12Demo02)
  * ============================================================
  */
 package com.carmotors.servicio;
@@ -22,25 +43,17 @@ import com.carmotors.dao.ProveedorDAO;
 import com.carmotors.dao.RepuestoDAO;
 import com.carmotors.excepcion.RecursoNoEncontradoException;
 import com.carmotors.excepcion.ReglaNegocioException;
-import com.carmotors.modelo.DesempenoProveedor;
 import com.carmotors.modelo.EvaluacionProveedor;
 import com.carmotors.modelo.ProductoCatalogo;
 import com.carmotors.modelo.Proveedor;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class ProveedorServicio {
-    // Ranking: mayor puntaje primero; desempata por nombre (S19Demo03 porTotalYCodigo).
-    private static final Comparator<DesempenoProveedor> POR_PUNTAJE = (a, b) -> {
-        // Puntaje con una cifra decimal convertido a entero (cast de S04) para comparar con Integer.compare.
-        int porPuntaje = Integer.compare((int) (b.puntajeGeneral() * 10), (int) (a.puntajeGeneral() * 10));
-        return porPuntaje != 0 ? porPuntaje : a.getProveedor().getNombre().compareTo(b.getProveedor().getNombre());
-    };
     // Ofertas de la más barata a la más cara.
     private static final Comparator<ProductoCatalogo> POR_COSTO = (a, b) -> Integer.compare(a.getCosto(), b.getCosto());
 
@@ -117,24 +130,6 @@ public class ProveedorServicio {
         obtenerProveedor(proveedorId);
         return evaluacionDAO.insertar(new EvaluacionProveedor(0, proveedorId, calidad, puntualidad,
                 null, comentario));  // la fecha la asigna MySQL (CURDATE())
-    }
-
-    /** Ranking de desempeño: mayor puntaje primero; desempata por nombre. */
-    public List<DesempenoProveedor> rankingDesempeno() throws SQLException {
-        List<EvaluacionProveedor> evaluaciones = evaluacionDAO.listar();
-        List<DesempenoProveedor> resumen = new ArrayList<>();
-        for (Proveedor proveedor : proveedorDAO.listar()) {
-            List<EvaluacionProveedor> propias = evaluaciones.stream()
-                    .filter(e -> e.getProveedorId() == proveedor.getId())
-                    .toList();
-            int cantidad = propias.size();
-            double calidad = cantidad == 0 ? 0 : (double) propias.stream().mapToInt(EvaluacionProveedor::getCalidad).sum() / cantidad;
-            double puntualidad = cantidad == 0 ? 0 : (double) propias.stream().mapToInt(EvaluacionProveedor::getPuntualidad).sum() / cantidad;
-            resumen.add(new DesempenoProveedor(proveedor, cantidad, calidad, puntualidad));
-        }
-        return resumen.stream()
-                .sorted(POR_PUNTAJE)
-                .toList();
     }
 
     /**

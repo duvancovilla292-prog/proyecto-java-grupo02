@@ -13,6 +13,11 @@
  *            actualizar, eliminar) más sus consultas específicas.
  *            Convención: buscarPor... devuelve null si no hay resultado
  *            (como Grupo.obtener de S08Demo04); el llamador lo comprueba.
+ * Visto en clase (demos del curso):
+ *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+ *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
  * ============================================================
  */
 package com.carmotors.dao;
@@ -31,8 +36,6 @@ public interface LoteDAO {
 
     List<Lote> listarPorRepuesto(int repuestoId) throws SQLException;
 
-    /** Consulta específica: lotes que caducan desde hoy hasta hoy + dias (o ya caducaron). */
-    List<Lote> listarPorVencer(int dias) throws SQLException;
 
     /** Corrige proveedor y fecha de caducidad (código, repuesto y cantidad son trazabilidad fija). */
     int actualizar(Lote lote) throws SQLException;

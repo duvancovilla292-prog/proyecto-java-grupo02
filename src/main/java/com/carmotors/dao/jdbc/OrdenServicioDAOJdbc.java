@@ -14,13 +14,26 @@
  *            los resuelve MySQL (en los demos solo se vio LocalDate.of).
  *            Reconstruye cada fila con OrdenServicioBuilder (patrón Builder)
  *            y traduce los ids de las tablas de consulta a enum.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+ *   - @Override y polimorfismo -> S07Demo01 EnvioExpress y S07Demo02PolimorfismoMain (Sesión 07)
+ *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+ *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
+ *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
+ *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - PATRÓN BUILDER -> S12Demo02 SolicitudBuilder (Sesión 12)
+ *   - JDBC: Connection, PreparedStatement, ResultSet, try-with-resources -> S18Demo01 UsuarioDAO (Sesión 18)
+ *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
+ *   - funciones de MySQL en el SQL (NOW, CURDATE, DATE_ADD, LAST_INSERT_ID) -> son SQL de MySQL, no Java; en Java solo se vio LocalDate.of (S12Demo02)
  * ============================================================
  */
 package com.carmotors.dao.jdbc;
 
 import com.carmotors.config.ConexionFactory;
 import com.carmotors.dao.OrdenServicioDAO;
-import com.carmotors.modelo.CalendarioPreventivo;
 import com.carmotors.modelo.EstadoServicio;
 import com.carmotors.modelo.OrdenServicio;
 import com.carmotors.modelo.OrdenServicioBuilder;
@@ -43,7 +56,6 @@ public class OrdenServicioDAOJdbc implements OrdenServicioDAO {
         this.conexiones = conexiones;
     }
 
-    @Override
     public int insertar(OrdenServicio orden) throws SQLException {
         try (Connection conexion = conexiones.abrir();
              PreparedStatement sentencia = conexion.prepareStatement("INSERT INTO servicios (vehiculo_id, "
@@ -59,7 +71,6 @@ public class OrdenServicioDAOJdbc implements OrdenServicioDAO {
         }
     }
 
-    @Override
     public OrdenServicio buscarPorId(int id) throws SQLException {
         try (Connection conexion = conexiones.abrir();
              PreparedStatement sentencia = conexion.prepareStatement(COLUMNAS + " WHERE id = ?")) {
@@ -69,7 +80,6 @@ public class OrdenServicioDAOJdbc implements OrdenServicioDAO {
         }
     }
 
-    @Override
     public List<OrdenServicio> listar() throws SQLException {
         try (Connection conexion = conexiones.abrir();
              PreparedStatement sentencia = conexion.prepareStatement(COLUMNAS + " ORDER BY fecha_recepcion, id")) {
@@ -77,7 +87,6 @@ public class OrdenServicioDAOJdbc implements OrdenServicioDAO {
         }
     }
 
-    @Override
     public List<OrdenServicio> listarPorVehiculo(int vehiculoId) throws SQLException {
         try (Connection conexion = conexiones.abrir();
              PreparedStatement sentencia = conexion.prepareStatement(COLUMNAS + " WHERE vehiculo_id = ? ORDER BY fecha_recepcion")) {
@@ -86,7 +95,6 @@ public class OrdenServicioDAOJdbc implements OrdenServicioDAO {
         }
     }
 
-    @Override
     public int actualizarEstado(int id, EstadoServicio estado) throws SQLException {
         try (Connection conexion = conexiones.abrir();
              PreparedStatement sentencia = conexion.prepareStatement("UPDATE servicios SET estado_id = ? WHERE id = ?")) {
@@ -96,7 +104,6 @@ public class OrdenServicioDAOJdbc implements OrdenServicioDAO {
         }
     }
 
-    @Override
     public int registrarEntrega(int id) throws SQLException {
         try (Connection conexion = conexiones.abrir();
              PreparedStatement sentencia = conexion.prepareStatement(
@@ -105,34 +112,6 @@ public class OrdenServicioDAOJdbc implements OrdenServicioDAO {
             sentencia.setInt(2, id);
             return sentencia.executeUpdate();
         }
-    }
-
-    @Override
-    public List<CalendarioPreventivo> calendarioPreventivos(int meses, int dias) throws SQLException {
-        // MySQL calcula las fechas: DATE() quita la hora, DATE_ADD suma meses o días y CURDATE() es hoy.
-        // Solo preventivos (tipo 1) con trabajo terminado (estados 3 Completado, 4 Facturado, 5 Entregado).
-        String sql = "SELECT vehiculo_id, DATE(MAX(fecha_recepcion)) AS ultimo, "
-                + "DATE_ADD(DATE(MAX(fecha_recepcion)), INTERVAL ? MONTH) AS proximo, "
-                + "CURDATE() AS hoy, DATE_ADD(CURDATE(), INTERVAL ? DAY) AS limite "
-                + "FROM servicios WHERE mantenimiento_tipo_id = ? AND estado_id IN (?, ?, ?) "
-                + "GROUP BY vehiculo_id ORDER BY proximo";
-        List<CalendarioPreventivo> resultado = new ArrayList<>();
-        try (Connection conexion = conexiones.abrir();
-             PreparedStatement sentencia = conexion.prepareStatement(sql)) {
-            sentencia.setInt(1, meses);
-            sentencia.setInt(2, dias);
-            sentencia.setInt(3, TipoMantenimiento.PREVENTIVO.getId());
-            sentencia.setInt(4, EstadoServicio.COMPLETADO.getId());
-            sentencia.setInt(5, EstadoServicio.FACTURADO.getId());
-            sentencia.setInt(6, EstadoServicio.ENTREGADO.getId());
-            try (ResultSet filas = sentencia.executeQuery()) {
-                while (filas.next()) {
-                    resultado.add(new CalendarioPreventivo(filas.getInt("vehiculo_id"), filas.getString("ultimo"),
-                            filas.getString("proximo"), filas.getString("hoy"), filas.getString("limite")));
-                }
-            }
-        }
-        return resultado;
     }
 
     private List<OrdenServicio> todas(PreparedStatement sentencia) throws SQLException {
@@ -154,7 +133,6 @@ public class OrdenServicioDAOJdbc implements OrdenServicioDAO {
         return ordenes;
     }
 
-    @Override
     public int actualizar(OrdenServicio orden) throws SQLException {
         try (Connection conexion = conexiones.abrir();
              PreparedStatement sentencia = conexion.prepareStatement("UPDATE servicios SET mantenimiento_tipo_id = ?, "
@@ -167,7 +145,6 @@ public class OrdenServicioDAOJdbc implements OrdenServicioDAO {
         }
     }
 
-    @Override
     public int eliminar(int id) throws SQLException {
         return JdbcUtil.eliminarPorId(conexiones, "DELETE FROM servicios WHERE id = ?", id);
     }
