@@ -8,6 +8,9 @@
  * Justificación: el servicio pregunta al estado actual "¿cuál es tu siguiente?"
  *            y "¿aceptas técnicos/repuestos?" sin conocer cada caso; una
  *            transición inválida (ej. entregar sin facturar) se rechaza aquí.
+ * Visto en clase (demos del curso):
+ *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+ *   - PATRÓN STATE -> S14Demo04 EstadoPedido (Sesión 14)
  * ============================================================
  */
 package com.carmotors.servicio.estado;

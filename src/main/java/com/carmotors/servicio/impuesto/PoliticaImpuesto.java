@@ -7,6 +7,9 @@
  * Justificación: si cambia la tarifa (IVA 19 %, exento, otra tasa) se crea
  *            otra estrategia sin modificar la facturación (OCP) y el
  *            servicio depende de esta abstracción (DIP).
+ * Visto en clase (demos del curso):
+ *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+ *   - PATRÓN STRATEGY -> S14Demo00 CalculadorEnvio (Sesión 14)
  * ============================================================
  */
 package com.carmotors.servicio.impuesto;

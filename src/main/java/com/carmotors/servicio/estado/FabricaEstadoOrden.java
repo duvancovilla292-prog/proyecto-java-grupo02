@@ -9,6 +9,12 @@
  * Justificación: la BD guarda un id; el comportamiento vive en objetos.
  *            Un único punto de creación evita repetir la decisión en cada
  *            servicio que necesite el estado (DRY) y oculta las clases concretas.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - métodos y miembros static -> S05Demo02ConversorTemperatura (Sesión 05)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - PATRÓN STATE -> S14Demo04 EstadoPedido (Sesión 14)
  * ============================================================
  */
 package com.carmotors.servicio.estado;

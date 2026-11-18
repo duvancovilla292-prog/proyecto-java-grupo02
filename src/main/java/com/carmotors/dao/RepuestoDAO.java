@@ -15,6 +15,11 @@
  *            reservas: así las reglas quedan en el servicio de inventario.
  *            Convención: buscarPor... devuelve null si no hay resultado
  *            (como Grupo.obtener de S08Demo04); el llamador lo comprueba.
+ * Visto en clase (demos del curso):
+ *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+ *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
  * ============================================================
  */
 package com.carmotors.dao;

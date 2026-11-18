@@ -1,4 +1,25 @@
-
+/*
+ * ============================================================
+ * Archivo: PublicadorInventario.java
+ * Propósito: mantener la lista de observadores y avisarles de alertas de stock.
+ * Conceptos clave: PATRÓN OBSERVER (sujeto), List/ArrayList (sesión 08),
+ *            for-each (sesión 03), try/catch por observador.
+ * Justificación: igual que en S14Demo01, un observador que falla no debe
+ *            impedir que los demás reciban el aviso ni romper la operación
+ *            de inventario que ya se guardó.
+ * Visto en clase (demos del curso):
+ *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
+ *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+ *   - operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
+ *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
+ *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
+ *   - toUpperCase / toLowerCase / contains -> S10Demo00SetMain normalizar y S18Demo00 correo.contains (Sesiones 10 y 18)
+ *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+ *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ *   - multi-catch y catch (RuntimeException) -> S16Demo02 EjecutorPrueba (Sesión 16)
+ *   - PATRÓN OBSERVER -> S14Demo01 PublicadorPedidos (Sesión 14)
+ * ============================================================
+ */
 package com.carmotors.servicio.observador;
 
 import com.carmotors.modelo.Repuesto;
