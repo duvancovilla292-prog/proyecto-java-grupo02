@@ -5,6 +5,8 @@
  *            catálogo de productos con costos, evaluación de desempeño
  *            y ranking.
  * Conceptos clave: Streams (filter, mapToInt, sum, count, sorted, anyMatch),
+ *            Comparator declarado como constante y Set (HashSet) para evitar
+ *            duplicados (sesiones 10 y 19),
  *            Comparator con desempate (S19Demo03), división decimal.
  * Justificación: el ranking se calcula en memoria a partir de las
  *            evaluaciones individuales; así se responde "¿qué proveedor
@@ -27,9 +29,21 @@ import com.carmotors.modelo.Proveedor;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ProveedorServicio {
+    // Ranking: mayor puntaje primero; desempata por nombre (S19Demo03 porTotalYCodigo).
+    private static final Comparator<DesempenoProveedor> POR_PUNTAJE = (a, b) -> {
+        // Puntaje con una cifra decimal convertido a entero (cast de S04) para comparar con Integer.compare.
+        int porPuntaje = Integer.compare((int) (b.puntajeGeneral() * 10), (int) (a.puntajeGeneral() * 10));
+        return porPuntaje != 0 ? porPuntaje : a.getProveedor().getNombre().compareTo(b.getProveedor().getNombre());
+    };
+    // Ofertas de la más barata a la más cara.
+    private static final Comparator<ProductoCatalogo> POR_COSTO = (a, b) -> Integer.compare(a.getCosto(), b.getCosto());
+
     private final ProveedorDAO proveedorDAO;
     private final CatalogoProveedorDAO catalogoDAO;
     private final EvaluacionProveedorDAO evaluacionDAO;
@@ -74,8 +88,11 @@ public class ProveedorServicio {
             throw new RecursoNoEncontradoException("No existe el repuesto " + repuestoId + ".");
         }
         ProductoCatalogo producto = new ProductoCatalogo(proveedorId, "", repuestoId, "", costo);
-        boolean existe = catalogoDAO.listarPorProveedor(proveedorId).stream()
-                .anyMatch(p -> p.getRepuestoId() == repuestoId);
+        // Set: repuestos que ya ofrece el proveedor, sin duplicados y con contains() directo.
+        Set<Integer> yaOfrecidos = new HashSet<>(catalogoDAO.listarPorProveedor(proveedorId).stream()
+                .map(ProductoCatalogo::getRepuestoId)
+                .toList());
+        boolean existe = yaOfrecidos.contains(repuestoId);
         if (existe) {
             catalogoDAO.actualizarCosto(proveedorId, repuestoId, producto.getCosto());
         } else {
@@ -92,7 +109,7 @@ public class ProveedorServicio {
     /** Ofertas del mismo repuesto entre proveedores, de la más barata a la más cara. */
     public List<ProductoCatalogo> compararPrecios(int repuestoId) throws SQLException {
         return catalogoDAO.listarPorRepuesto(repuestoId).stream()
-                .sorted((a, b) -> Integer.compare(a.getCosto(), b.getCosto()))
+                .sorted(POR_COSTO)
                 .toList();
     }
 
@@ -116,12 +133,7 @@ public class ProveedorServicio {
             resumen.add(new DesempenoProveedor(proveedor, cantidad, calidad, puntualidad));
         }
         return resumen.stream()
-                .sorted((a, b) -> {
-                    // Puntaje con una cifra decimal convertido a entero (cast de S04) para comparar con Integer.compare.
-                    int porPuntaje = Integer.compare((int) (b.puntajeGeneral() * 10), (int) (a.puntajeGeneral() * 10));
-                    return porPuntaje != 0 ? porPuntaje
-                            : a.getProveedor().getNombre().compareTo(b.getProveedor().getNombre());
-                })
+                .sorted(POR_PUNTAJE)
                 .toList();
     }
 

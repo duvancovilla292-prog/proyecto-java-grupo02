@@ -5,7 +5,8 @@
  *            productividad por técnico y análisis de consumo de repuestos.
  * Conceptos clave: capa de servicio, API Stream (filter, map, distinct,
  *            sorted con Comparator, count, mapToInt + sum, reduce - sesión 20),
- *            lambdas y referencias a método (sesión 19).
+ *            lambdas y referencias a método, Comparator declarado (sesión 19),
+ *            Set/HashSet para ids sin duplicados (sesión 10).
  * Justificación: aquí solo se CALCULA (agrupar, contar, sumar, ordenar) y se
  *            devuelven objetos del modelo; la presentación la hacen las clases
  *            de vista/reporte (Template Method). Los agrupamientos se hacen con
@@ -33,9 +34,23 @@ import com.carmotors.modelo.TipoMantenimiento;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ReporteServicio {
+    // Más solicitados primero.
+    private static final Comparator<ResumenTipoServicio> POR_SOLICITUDES =
+            (a, b) -> Integer.compare(b.getSolicitudes(), a.getSolicitudes());
+    // Más terminadas primero; desempata por mano de obra.
+    private static final Comparator<ProductividadTecnico> POR_PRODUCTIVIDAD = (a, b) -> {
+        int porTerminadas = Integer.compare(b.getTerminadas(), a.getTerminadas());
+        return porTerminadas != 0 ? porTerminadas : Integer.compare(b.getManoObra(), a.getManoObra());
+    };
+    // Más consumido primero.
+    private static final Comparator<ConsumoRepuesto> POR_CONSUMO = (a, b) -> Integer.compare(b.getUsadas(), a.getUsadas());
+
     private final OrdenServicioDAO ordenDAO;
     private final DetalleRepuestoDAO detalleDAO;
     private final TecnicoDAO tecnicoDAO;
@@ -51,6 +66,7 @@ public class ReporteServicio {
         this.repuestoDAO = repuestoDAO;
     }
 
+    // ------------------------------------------------------------ Servicios más solicitados
 
     /** Un resumen por tipo de mantenimiento, del más solicitado al menos solicitado. */
     public List<ResumenTipoServicio> serviciosPorTipo() throws SQLException {
@@ -61,7 +77,7 @@ public class ReporteServicio {
                         (int) ordenes.stream().filter(o -> o.getTipoMantenimiento() == tipo).count(),
                         manoObraTerminada(ordenes, tipo),
                         ventaRepuestos(ordenes, detalles, tipo)))
-                .sorted((a, b) -> Integer.compare(b.getSolicitudes(), a.getSolicitudes()))
+                .sorted(POR_SOLICITUDES)
                 .toList();
     }
 
@@ -96,26 +112,33 @@ public class ReporteServicio {
     }
 
     private int ventaRepuestos(List<OrdenServicio> ordenes, List<DetalleRepuesto> detalles, TipoMantenimiento tipo) {
-        List<Integer> idsDelTipo = ordenes.stream()
+        Set<Integer> idsDelTipo = new HashSet<>(ordenes.stream()
                 .filter(o -> o.getTipoMantenimiento() == tipo)
                 .map(OrdenServicio::getId)
-                .toList();
+                .toList());
         return detalles.stream()
                 .filter(d -> d.getEstado() == EstadoReserva.DEDUCIDO && idsDelTipo.contains(d.getServicioId()))
                 .map(DetalleRepuesto::subtotal)
                 .reduce(0, Integer::sum);
     }
 
+    // ------------------------------------------------------------ Productividad por técnico
 
+    /**
+     * Para cada técnico: órdenes terminadas, en curso y mano de obra generada.
+     * La mano de obra de una orden se reparte en partes iguales entre sus técnicos.
+     * Orden: más terminadas primero; desempata por mano de obra.
+     */
     public List<ProductividadTecnico> productividadTecnicos() throws SQLException {
         List<OrdenServicio> ordenes = ordenDAO.listar();
         List<AsignacionTecnico> asignaciones = asignacionDAO.listar();
         return tecnicoDAO.listar().stream()
                 .map(tecnico -> {
-                    List<Integer> ids = asignaciones.stream()
+                    // Set: un técnico cuenta cada orden una sola vez.
+                    Set<Integer> ids = new HashSet<>(asignaciones.stream()
                             .filter(a -> a.getTecnicoId() == tecnico.getId())
                             .map(AsignacionTecnico::getServicioId)
-                            .toList();
+                            .toList());
                     List<OrdenServicio> propias = ordenes.stream().filter(o -> ids.contains(o.getId())).toList();
                     int terminadas = (int) propias.stream().filter(o -> o.getEstado().trabajoTerminado()).count();
                     int manoObra = propias.stream()
@@ -125,13 +148,11 @@ public class ReporteServicio {
                             .reduce(0, Integer::sum);
                     return new ProductividadTecnico(tecnico, terminadas, propias.size() - terminadas, manoObra);
                 })
-                .sorted((a, b) -> {
-                    int porTerminadas = Integer.compare(b.getTerminadas(), a.getTerminadas());
-                    return porTerminadas != 0 ? porTerminadas : Integer.compare(b.getManoObra(), a.getManoObra());
-                })
+                .sorted(POR_PRODUCTIVIDAD)
                 .toList();
     }
 
+    // ------------------------------------------------------------ Consumo de repuestos
 
     /** Repuestos con movimiento (usados o reservados), del más consumido al menos consumido. */
     public List<ConsumoRepuesto> consumoRepuestos() throws SQLException {
@@ -148,7 +169,7 @@ public class ReporteServicio {
                             ingreso - usadas * r.getPrecioCompra());
                 })
                 .filter(c -> c.getUsadas() > 0 || c.getReservadas() > 0)
-                .sorted((a, b) -> Integer.compare(b.getUsadas(), a.getUsadas()))
+                .sorted(POR_CONSUMO)
                 .toList();
     }
 
