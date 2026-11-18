@@ -6,7 +6,7 @@
  * Conceptos clave: MVC - Controlador, COMMAND, conversión de id a enum
  *            (TipoMantenimiento.desdeId / EstadoServicio.desdeId).
  * Justificación: cada opción es una acción pequeña que delega en
- *            OrdenServicioServicio; las reglas (State, reserva, deducción,
+ *            OrdenServicioServicio (o en TallerFacade para la recepción rápida); las reglas (State, reserva, deducción,
  *            liberación de reservas) no aparecen aquí.
  * ============================================================
  */
@@ -17,6 +17,7 @@ import com.carmotors.modelo.OrdenServicio;
 import com.carmotors.modelo.Tecnico;
 import com.carmotors.modelo.TipoMantenimiento;
 import com.carmotors.servicio.OrdenServicioServicio;
+import com.carmotors.servicio.TallerFacade;
 import com.carmotors.vista.OrdenServicioVista;
 import com.carmotors.vista.VistaConsola;
 
@@ -26,11 +27,14 @@ import java.util.List;
 public class OrdenServicioController extends ControladorBase {
     private final OrdenServicioVista vista;
     private final OrdenServicioServicio servicio;
+    private final TallerFacade taller;  // Facade para la recepción completa
 
-    public OrdenServicioController(VistaConsola consola, OrdenServicioVista vista, OrdenServicioServicio servicio) {
+    public OrdenServicioController(VistaConsola consola, OrdenServicioVista vista, OrdenServicioServicio servicio,
+                                   TallerFacade taller) {
         super(consola, vista);
         this.vista = vista;
         this.servicio = servicio;
+        this.taller = taller;
         registrar("1", () -> crearOrden());
         registrar("2", () -> vista.mostrarOrdenes(servicio.listarOrdenes()));
         registrar("3", () -> listarPorEstado());
@@ -50,6 +54,7 @@ public class OrdenServicioController extends ControladorBase {
         registrar("17", () -> actualizarTecnico());
         registrar("18", () -> cambiarActividad());
         registrar("19", () -> eliminarTecnico());
+        registrar("20", () -> recepcionRapida());
     }
 
     private void crearOrden() throws SQLException {
@@ -60,6 +65,35 @@ public class OrdenServicioController extends ControladorBase {
         int manoObra = consola.leerMonto("Costo estimado de mano de obra: ");
         int id = servicio.crearOrden(placa, tipo, descripcion, manoObra);
         consola.mostrarExito("Orden #" + id + " creada en estado Pendiente.");
+    }
+
+    // Pide solo los datos que faltan: si el cliente o el vehículo ya existen, no los vuelve a pedir.
+    private void recepcionRapida() throws SQLException {
+        String documento = consola.leerTextoObligatorio("Documento del cliente: ");
+        String nombre = "";
+        String telefono = "";
+        String email = "";
+        if (taller.esClienteNuevo(documento)) {
+            consola.mostrar("Cliente nuevo: complete sus datos.");
+            nombre = consola.leerTextoObligatorio("Nombre completo: ");
+            telefono = consola.leerTexto("Teléfono: ");
+            email = consola.leerTextoObligatorio("Email: ");
+        }
+        String placa = consola.leerTextoObligatorio("Placa del vehículo: ");
+        String marca = "";
+        String modelo = "";
+        if (taller.esVehiculoNuevo(placa)) {
+            consola.mostrar("Vehículo nuevo: complete sus datos.");
+            marca = consola.leerTexto("Marca: ");
+            modelo = consola.leerTexto("Modelo: ");
+        }
+        vista.mostrarTiposMantenimiento();
+        TipoMantenimiento tipo = TipoMantenimiento.desdeId(consola.leerEntero("Tipo de mantenimiento: "));
+        String descripcion = consola.leerTextoObligatorio("Descripción del problema: ");
+        int manoObra = consola.leerMonto("Costo estimado de mano de obra: ");
+        int id = taller.recibirVehiculo(documento, nombre, telefono, email, placa, marca, modelo, tipo, descripcion,
+                manoObra);
+        consola.mostrarExito("Recepción completa: orden #" + id + " creada en estado Pendiente.");
     }
 
     private void listarPorEstado() throws SQLException {

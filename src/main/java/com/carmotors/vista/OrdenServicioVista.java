@@ -43,7 +43,8 @@ public class OrdenServicioVista implements VistaMenu {
             "Listar técnicos",
             "Actualizar datos de un técnico",
             "Activar / desactivar técnico",
-            "Eliminar técnico sin historial");
+            "Eliminar técnico sin historial",
+            "Recepción rápida: cliente + vehículo + orden");
 
     private final VistaConsola consola;
 
