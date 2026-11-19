@@ -64,18 +64,11 @@ public class InventarioServicio {
 
     /** Crea sus propios DAO JDBC y usa el publicador único de alertas (Observer). */
     public InventarioServicio() {
-        this(new RepuestoDAOJdbc(ConexionFactory.getInstancia()), new TipoRepuestoDAOJdbc(ConexionFactory.getInstancia()),
-                new LoteDAOJdbc(ConexionFactory.getInstancia()), new ProveedorDAOJdbc(ConexionFactory.getInstancia()),
-                PublicadorInventario.getInstancia());
-    }
-
-    public InventarioServicio(RepuestoDAO repuestoDAO, TipoRepuestoDAO tipoDAO, LoteDAO loteDAO,
-                              ProveedorDAO proveedorDAO, PublicadorInventario publicador) {
-        this.repuestoDAO = repuestoDAO;
-        this.tipoDAO = tipoDAO;
-        this.loteDAO = loteDAO;
-        this.proveedorDAO = proveedorDAO;
-        this.publicador = publicador;
+        this.repuestoDAO = new RepuestoDAOJdbc(ConexionFactory.getInstancia());
+        this.tipoDAO = new TipoRepuestoDAOJdbc(ConexionFactory.getInstancia());
+        this.loteDAO = new LoteDAOJdbc(ConexionFactory.getInstancia());
+        this.proveedorDAO = new ProveedorDAOJdbc(ConexionFactory.getInstancia());
+        this.publicador = PublicadorInventario.getInstancia();
     }
 
     public List<TipoRepuesto> listarTipos() throws SQLException {

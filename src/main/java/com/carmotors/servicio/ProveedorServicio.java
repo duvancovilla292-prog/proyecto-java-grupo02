@@ -71,18 +71,11 @@ public class ProveedorServicio {
 
     /** Crea sus propios DAO JDBC con la conexión del Singleton. */
     public ProveedorServicio() {
-        this(new ProveedorDAOJdbc(ConexionFactory.getInstancia()), new CatalogoProveedorDAOJdbc(ConexionFactory.getInstancia()),
-                new EvaluacionProveedorDAOJdbc(ConexionFactory.getInstancia()), new RepuestoDAOJdbc(ConexionFactory.getInstancia()),
-                new LoteDAOJdbc(ConexionFactory.getInstancia()));
-    }
-
-    public ProveedorServicio(ProveedorDAO proveedorDAO, CatalogoProveedorDAO catalogoDAO,
-                             EvaluacionProveedorDAO evaluacionDAO, RepuestoDAO repuestoDAO, LoteDAO loteDAO) {
-        this.proveedorDAO = proveedorDAO;
-        this.catalogoDAO = catalogoDAO;
-        this.evaluacionDAO = evaluacionDAO;
-        this.repuestoDAO = repuestoDAO;
-        this.loteDAO = loteDAO;
+        this.proveedorDAO = new ProveedorDAOJdbc(ConexionFactory.getInstancia());
+        this.catalogoDAO = new CatalogoProveedorDAOJdbc(ConexionFactory.getInstancia());
+        this.evaluacionDAO = new EvaluacionProveedorDAOJdbc(ConexionFactory.getInstancia());
+        this.repuestoDAO = new RepuestoDAOJdbc(ConexionFactory.getInstancia());
+        this.loteDAO = new LoteDAOJdbc(ConexionFactory.getInstancia());
     }
 
     public int registrarProveedor(String nombre, String contacto, String telefono, String email) throws SQLException {

@@ -70,20 +70,12 @@ public class OrdenServicioServicio {
 
     /** Crea sus propios DAO JDBC y el servicio de inventario con el que reserva/deduce stock. */
     public OrdenServicioServicio() {
-        this(new OrdenServicioDAOJdbc(ConexionFactory.getInstancia()), new VehiculoDAOJdbc(ConexionFactory.getInstancia()),
-                new TecnicoDAOJdbc(ConexionFactory.getInstancia()), new AsignacionTecnicoDAOJdbc(ConexionFactory.getInstancia()),
-                new DetalleRepuestoDAOJdbc(ConexionFactory.getInstancia()), new InventarioServicio());
-    }
-
-    public OrdenServicioServicio(OrdenServicioDAO ordenDAO, VehiculoDAO vehiculoDAO, TecnicoDAO tecnicoDAO,
-                                 AsignacionTecnicoDAO asignacionDAO, DetalleRepuestoDAO detalleDAO,
-                                 InventarioServicio inventario) {
-        this.ordenDAO = ordenDAO;
-        this.vehiculoDAO = vehiculoDAO;
-        this.tecnicoDAO = tecnicoDAO;
-        this.asignacionDAO = asignacionDAO;
-        this.detalleDAO = detalleDAO;
-        this.inventario = inventario;
+        this.ordenDAO = new OrdenServicioDAOJdbc(ConexionFactory.getInstancia());
+        this.vehiculoDAO = new VehiculoDAOJdbc(ConexionFactory.getInstancia());
+        this.tecnicoDAO = new TecnicoDAOJdbc(ConexionFactory.getInstancia());
+        this.asignacionDAO = new AsignacionTecnicoDAOJdbc(ConexionFactory.getInstancia());
+        this.detalleDAO = new DetalleRepuestoDAOJdbc(ConexionFactory.getInstancia());
+        this.inventario = new InventarioServicio();
     }
 
     // ------------------------------------------------------------ Órdenes

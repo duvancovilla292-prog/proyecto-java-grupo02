@@ -33,15 +33,11 @@ public class ProveedorController extends ControladorBase {
     private final ProveedorVista vista;
     private final ProveedorServicio servicio;
 
-    /** Crea su vista y su servicio: el módulo se instancia solo cuando el usuario entra a él. */
-    public ProveedorController(VistaConsola consola) {
-        this(consola, new ProveedorVista(consola), new ProveedorServicio());
-    }
-
-    public ProveedorController(VistaConsola consola, ProveedorVista vista, ProveedorServicio servicio) {
+    /** Recibe su vista (como UsuarioController de S18Demo01) y crea su servicio; se instancia solo cuando el usuario entra al módulo. */
+    public ProveedorController(VistaConsola consola, ProveedorVista vista) {
         super(consola, vista);
         this.vista = vista;
-        this.servicio = servicio;
+        this.servicio = new ProveedorServicio();
         registrar("1", () -> registrarProveedor());
         registrar("2", () -> vista.mostrarProveedores(servicio.listarProveedores()));
         registrar("3", () -> actualizar());

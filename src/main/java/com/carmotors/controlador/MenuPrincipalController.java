@@ -10,9 +10,10 @@
  * Justificación: no conoce la lógica de ningún módulo ni los textos del menú
  *            (los da la vista MenuPrincipal); agregar un módulo nuevo es
  *            registrar una línea más (OCP). Cada módulo se crea SOLO cuando
- *            el usuario entra a él (cada controlador crea su vista y su
- *            servicio, y cada servicio sus DAO), así Main no instancia nada
- *            de las capas inferiores.
+ *            el usuario entra a él: aquí se crea su vista y se le pasa al
+ *            controlador (como S18Demo01UsuariosMain con UsuarioController);
+ *            el controlador crea su servicio y cada servicio sus DAO, así Main
+ *            no instancia nada de las capas inferiores.
  * Visto en clase (demos del curso):
  *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
  *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
@@ -35,7 +36,13 @@ import com.carmotors.config.ConexionFactory;
 import com.carmotors.excepcion.ConfiguracionException;
 import com.carmotors.servicio.observador.AlertaStockObservador;
 import com.carmotors.servicio.observador.PublicadorInventario;
+import com.carmotors.vista.ClienteVista;
+import com.carmotors.vista.FacturacionVista;
+import com.carmotors.vista.InventarioVista;
 import com.carmotors.vista.MenuPrincipal;
+import com.carmotors.vista.OrdenServicioVista;
+import com.carmotors.vista.ProveedorVista;
+import com.carmotors.vista.ReporteVista;
 import com.carmotors.vista.VistaConsola;
 
 import java.sql.SQLException;
@@ -49,12 +56,12 @@ public class MenuPrincipalController extends ControladorBase {
         // Observer: las alertas de stock bajo se muestran automáticamente en la consola.
         PublicadorInventario.getInstancia().suscribir(new AlertaStockObservador(consola::mostrarAlerta));
         // Command: cada opción crea el módulo en el momento en que se necesita.
-        registrar("1", () -> new InventarioController(consola).iniciar());
-        registrar("2", () -> new OrdenServicioController(consola).iniciar());
-        registrar("3", () -> new ClienteController(consola).iniciar());
-        registrar("4", () -> new FacturacionController(consola).iniciar());
-        registrar("5", () -> new ProveedorController(consola).iniciar());
-        registrar("6", () -> new ReporteController(consola).iniciar());
+        registrar("1", () -> new InventarioController(consola, new InventarioVista(consola)).iniciar());
+        registrar("2", () -> new OrdenServicioController(consola, new OrdenServicioVista(consola)).iniciar());
+        registrar("3", () -> new ClienteController(consola, new ClienteVista(consola)).iniciar());
+        registrar("4", () -> new FacturacionController(consola, new FacturacionVista(consola)).iniciar());
+        registrar("5", () -> new ProveedorController(consola, new ProveedorVista(consola)).iniciar());
+        registrar("6", () -> new ReporteController(consola, new ReporteVista(consola)).iniciar());
     }
 
     /** Comprueba la configuración y la conexión con MySQL; false si no se puede continuar. */

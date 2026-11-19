@@ -57,14 +57,9 @@ public class ClienteServicio {
 
     /** Crea sus propios DAO JDBC con la conexión del Singleton. */
     public ClienteServicio() {
-        this(new ClienteDAOJdbc(ConexionFactory.getInstancia()), new VehiculoDAOJdbc(ConexionFactory.getInstancia()),
-                new OrdenServicioDAOJdbc(ConexionFactory.getInstancia()));
-    }
-
-    public ClienteServicio(ClienteDAO clienteDAO, VehiculoDAO vehiculoDAO, OrdenServicioDAO ordenDAO) {
-        this.clienteDAO = clienteDAO;
-        this.vehiculoDAO = vehiculoDAO;
-        this.ordenDAO = ordenDAO;
+        this.clienteDAO = new ClienteDAOJdbc(ConexionFactory.getInstancia());
+        this.vehiculoDAO = new VehiculoDAOJdbc(ConexionFactory.getInstancia());
+        this.ordenDAO = new OrdenServicioDAOJdbc(ConexionFactory.getInstancia());
     }
 
     public int registrarCliente(String nombre, String documento, String telefono, String email) throws SQLException {

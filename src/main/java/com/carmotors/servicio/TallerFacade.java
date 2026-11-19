@@ -36,12 +36,8 @@ public class TallerFacade {
 
     /** Crea los servicios que coordina. */
     public TallerFacade() {
-        this(new ClienteServicio(), new OrdenServicioServicio());
-    }
-
-    public TallerFacade(ClienteServicio clientes, OrdenServicioServicio ordenes) {
-        this.clientes = clientes;
-        this.ordenes = ordenes;
+        this.clientes = new ClienteServicio();
+        this.ordenes = new OrdenServicioServicio();
     }
 
     /** true si hay que pedir los datos del cliente porque aún no existe. */

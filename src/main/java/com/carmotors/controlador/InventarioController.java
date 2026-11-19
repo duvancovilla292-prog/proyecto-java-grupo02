@@ -31,15 +31,11 @@ public class InventarioController extends ControladorBase {
     private final InventarioVista vista;
     private final InventarioServicio servicio;
 
-    /** Crea su vista y su servicio: el módulo se instancia solo cuando el usuario entra a él. */
-    public InventarioController(VistaConsola consola) {
-        this(consola, new InventarioVista(consola), new InventarioServicio());
-    }
-
-    public InventarioController(VistaConsola consola, InventarioVista vista, InventarioServicio servicio) {
+    /** Recibe su vista (como UsuarioController de S18Demo01) y crea su servicio; se instancia solo cuando el usuario entra al módulo. */
+    public InventarioController(VistaConsola consola, InventarioVista vista) {
         super(consola, vista);
         this.vista = vista;
-        this.servicio = servicio;
+        this.servicio = new InventarioServicio();
         registrar("1", () -> registrarRepuesto());
         registrar("2", () -> registrarLote());
         registrar("3", () -> vista.mostrarRepuestos(servicio.listarRepuestos()));

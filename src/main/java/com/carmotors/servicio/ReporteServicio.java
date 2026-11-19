@@ -87,11 +87,7 @@ public class ReporteServicio {
 
     /** Crea su propio DAO de reportes con la conexión del Singleton. */
     public ReporteServicio() {
-        this(new ReporteDAOJdbc(ConexionFactory.getInstancia()));
-    }
-
-    public ReporteServicio(ReporteDAO reporteDAO) {
-        this.reporteDAO = reporteDAO;
+        this.reporteDAO = new ReporteDAOJdbc(ConexionFactory.getInstancia());
     }
 
     // ------------------------------------------------------------ Servicios más solicitados

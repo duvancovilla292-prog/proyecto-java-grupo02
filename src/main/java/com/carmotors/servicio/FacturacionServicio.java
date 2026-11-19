@@ -68,18 +68,11 @@ public class FacturacionServicio {
 
     /** Crea sus DAO y toma el IVA y la carpeta de facturas de la configuración (Singleton). */
     public FacturacionServicio() {
-        this(new FacturaDAOJdbc(ConexionFactory.getInstancia()), new ClienteDAOJdbc(ConexionFactory.getInstancia()),
-                new OrdenServicioServicio(), new ImpuestoIva(ConexionFactory.getInstancia().getIvaPorcentaje()),  // Strategy elegida
-                ConexionFactory.getInstancia().getCarpetaFacturas());
-    }
-
-    public FacturacionServicio(FacturaDAO facturaDAO, ClienteDAO clienteDAO, OrdenServicioServicio ordenes,
-                               PoliticaImpuesto politicaImpuesto, Path carpetaFacturas) {
-        this.facturaDAO = facturaDAO;
-        this.clienteDAO = clienteDAO;
-        this.ordenes = ordenes;
-        this.politicaImpuesto = politicaImpuesto;
-        this.carpetaFacturas = carpetaFacturas;
+        this.facturaDAO = new FacturaDAOJdbc(ConexionFactory.getInstancia());
+        this.clienteDAO = new ClienteDAOJdbc(ConexionFactory.getInstancia());
+        this.ordenes = new OrdenServicioServicio();
+        this.politicaImpuesto = new ImpuestoIva(ConexionFactory.getInstancia().getIvaPorcentaje()); // Strategy elegida
+        this.carpetaFacturas = ConexionFactory.getInstancia().getCarpetaFacturas();
     }
 
     /**

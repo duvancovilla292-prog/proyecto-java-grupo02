@@ -44,17 +44,12 @@ public class OrdenServicioController extends ControladorBase {
     private final OrdenServicioServicio servicio;
     private final TallerFacade taller;  // Facade para la recepción completa
 
-    /** Crea su vista y su servicio: el módulo se instancia solo cuando el usuario entra a él. */
-    public OrdenServicioController(VistaConsola consola) {
-        this(consola, new OrdenServicioVista(consola), new OrdenServicioServicio(), new TallerFacade());
-    }
-
-    public OrdenServicioController(VistaConsola consola, OrdenServicioVista vista, OrdenServicioServicio servicio,
-                                   TallerFacade taller) {
+    /** Recibe su vista (como UsuarioController de S18Demo01) y crea su servicio; se instancia solo cuando el usuario entra al módulo. */
+    public OrdenServicioController(VistaConsola consola, OrdenServicioVista vista) {
         super(consola, vista);
         this.vista = vista;
-        this.servicio = servicio;
-        this.taller = taller;
+        this.servicio = new OrdenServicioServicio();
+        this.taller = new TallerFacade();
         registrar("1", () -> crearOrden());
         registrar("2", () -> vista.mostrarOrdenes(servicio.listarOrdenes()));
         registrar("3", () -> listarPorEstado());

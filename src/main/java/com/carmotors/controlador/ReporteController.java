@@ -40,15 +40,11 @@ public class ReporteController extends ControladorBase {
     private final ReporteVista vista;
     private final ReporteServicio servicio;
 
-    /** Crea su vista y su servicio: el módulo se instancia solo cuando el usuario entra a él. */
-    public ReporteController(VistaConsola consola) {
-        this(consola, new ReporteVista(consola), new ReporteServicio());
-    }
-
-    public ReporteController(VistaConsola consola, ReporteVista vista, ReporteServicio servicio) {
+    /** Recibe su vista (como UsuarioController de S18Demo01) y crea su servicio; se instancia solo cuando el usuario entra al módulo. */
+    public ReporteController(VistaConsola consola, ReporteVista vista) {
         super(consola, vista);
         this.vista = vista;
-        this.servicio = servicio;
+        this.servicio = new ReporteServicio();
         registrar("1", () -> vista.mostrarServiciosSolicitados(servicio.serviciosPorTipo(),
                 servicio.serviciosPorDescripcion(DESCRIPCIONES_TOP)));
         registrar("2", () -> vista.mostrarProductividad(servicio.productividadTecnicos()));

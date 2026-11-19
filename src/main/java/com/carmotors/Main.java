@@ -8,9 +8,10 @@
  *            vista raíz y su controlador).
  * Justificación: Main no conoce DAO, servicios ni constantes de
  *            configuración. La configuración (credenciales, IVA, carpeta de
- *            facturas) vive en el Singleton ConexionFactory; cada controlador
- *            crea su vista y su servicio, y cada servicio sus DAO, en el
- *            momento en que el usuario entra al módulo.
+ *            facturas) vive en el Singleton ConexionFactory; el menú
+ *            principal crea la vista de cada módulo y se la pasa a su
+ *            controlador, que crea su servicio (y cada servicio sus DAO), en
+ *            el momento en que el usuario entra al módulo.
  * Visto en clase (demos del curso):
  *   - Scanner y hasNextLine -> S03Scanner (Sesión 03) y S18Demo01 VistaConsola (Sesión 18)
  *   - if / else if / else -> S02DemoDecisiones (Sesión 02)

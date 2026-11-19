@@ -36,15 +36,11 @@ public class ClienteController extends ControladorBase {
     private final ClienteVista vista;
     private final ClienteServicio servicio;
 
-    /** Crea su vista y su servicio: el módulo se instancia solo cuando el usuario entra a él. */
-    public ClienteController(VistaConsola consola) {
-        this(consola, new ClienteVista(consola), new ClienteServicio());
-    }
-
-    public ClienteController(VistaConsola consola, ClienteVista vista, ClienteServicio servicio) {
+    /** Recibe su vista (como UsuarioController de S18Demo01) y crea su servicio; se instancia solo cuando el usuario entra al módulo. */
+    public ClienteController(VistaConsola consola, ClienteVista vista) {
         super(consola, vista);
         this.vista = vista;
-        this.servicio = servicio;
+        this.servicio = new ClienteServicio();
         registrar("1", () -> registrarCliente());
         registrar("2", () -> actualizarCliente());
         registrar("3", () -> vista.mostrarClientes(servicio.listarClientes()));

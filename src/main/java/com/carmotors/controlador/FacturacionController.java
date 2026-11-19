@@ -36,15 +36,11 @@ public class FacturacionController extends ControladorBase {
     private final FacturacionVista vista;
     private final FacturacionServicio facturacion;
 
-    /** Crea su vista y su servicio: el módulo se instancia solo cuando el usuario entra a él. */
-    public FacturacionController(VistaConsola consola) {
-        this(consola, new FacturacionVista(consola), new FacturacionServicio());
-    }
-
-    public FacturacionController(VistaConsola consola, FacturacionVista vista, FacturacionServicio facturacion) {
+    /** Recibe su vista (como UsuarioController de S18Demo01) y crea su servicio; se instancia solo cuando el usuario entra al módulo. */
+    public FacturacionController(VistaConsola consola, FacturacionVista vista) {
         super(consola, vista);
         this.vista = vista;
-        this.facturacion = facturacion;
+        this.facturacion = new FacturacionServicio();
         registrar("1", () -> facturar());
         registrar("2", () -> vista.mostrarFacturas(facturacion.listarFacturas()));
         registrar("3", () -> vista.mostrarFactura(
