@@ -9,15 +9,8 @@
  *            datos (disponible = stock - reservado; ¿está bajo mínimo?).
  *            Las reglas que coordinan varias entidades (reservar, deducir)
  *            están en la capa de servicio (SRP).
- * Visto en clase (demos del curso):
- *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
- *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
- *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
- *   - operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
- *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
- *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
- *   - String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
- *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.modelo;
@@ -25,6 +18,8 @@ package com.carmotors.modelo;
 import com.carmotors.excepcion.DatoInvalidoException;
 
 public class Repuesto {
+    // Visto en clase: constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+    // Visto en clase: encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
     private final int id;
     private final String nombre;
     private final int tipoId;            // FK -> repuesto_tipos.id
@@ -37,10 +32,15 @@ public class Repuesto {
     private final int stockMinimo;       // umbral de alerta
     private final int cantidadReservada; // unidades comprometidas con órdenes abiertas
 
+    // Visto en clase: clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
     public Repuesto(int id, String nombre, int tipoId, String nombreTipo, String marca, int proveedorId,
                     int precioCompra, int precioVenta, int cantidadStock, int stockMinimo,
                     int cantidadReservada) {
+        // Visto en clase: operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
+        // Visto en clase: if / else if / else -> S02DemoDecisiones (Sesión 02)
+        // Visto en clase: String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
         if (nombre == null || nombre.isBlank()) {
+            // Visto en clase: try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
             throw new DatoInvalidoException("Nombre de repuesto obligatorio.");
         }
         if (tipoId <= 0 || proveedorId <= 0) {
@@ -55,6 +55,7 @@ public class Repuesto {
         this.id = id;
         this.nombre = nombre.strip();
         this.tipoId = tipoId;
+        // Visto en clase: operador ternario ? : -> S02DemoOpciones (Sesión 02)
         this.nombreTipo = nombreTipo == null ? "" : nombreTipo;
         this.marca = marca == null ? "" : marca.strip();
         this.proveedorId = proveedorId;

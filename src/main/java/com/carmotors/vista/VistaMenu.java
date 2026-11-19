@@ -9,19 +9,20 @@
  *            controlador solo asocia cada número con una acción (Command) y
  *            ControladorBase pide el menú a esta interfaz, sin conocer qué
  *            vista concreta lo dibuja (Inversión de Dependencias).
- * Visto en clase (demos del curso):
- *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
- *   - Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.vista;
 
 import java.util.Map;
 
+// Visto en clase: interfaces e implements -> S07Demo04 Notificable (Sesión 07)
 public interface VistaMenu {
     /** Título que se muestra sobre el menú. */
     String titulo();
 
+    // Visto en clase: Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
     /** Opciones en orden: número -> texto. */
     Map<String, String> opciones();
 

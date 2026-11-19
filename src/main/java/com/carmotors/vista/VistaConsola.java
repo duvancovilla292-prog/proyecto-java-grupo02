@@ -2,7 +2,8 @@
  * ============================================================
  * Archivo: VistaConsola.java
  * Propósito: única puerta de entrada/salida con el usuario por consola:
- *            mostrar mensajes, menús y listas, y leer datos tecleados.
+ *            mostrar mensajes, menús, listas y separadores de sección
+ *            (mostrarSeccion / mostrarSeparador), y leer datos tecleados.
  * Conceptos clave: MVC - Vista (S18Demo01 VistaConsola), Scanner (sesión 03),
  *            hasNextLine para fin de entrada, Integer.parseInt
  *            con NumberFormatException (sesiones 04 y 10), Map para menús.
@@ -10,24 +11,8 @@
  *            resultados, pero NO decide reglas de negocio. Un error de formato
  *            se traduce a DatoInvalidoException para que el controlador lo
  *            muestre con el mismo mecanismo que los demás errores.
- * Visto en clase (demos del curso):
- *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
- *   - métodos y miembros static -> S05Demo02ConversorTemperatura (Sesión 05)
- *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
- *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
- *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
- *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
- *   - Scanner y hasNextLine -> S03Scanner (Sesión 03) y S18Demo01 VistaConsola (Sesión 18)
- *   - String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
- *   - toUpperCase / toLowerCase / contains -> S10Demo00SetMain normalizar y S18Demo00 correo.contains (Sesiones 10 y 18)
- *   - conversiones: Integer.parseInt, String.valueOf, cast (int)/(double) -> S04DemoConversiones (Sesión 04) y S08Demo00 cast (double) (Sesión 08)
- *   - arreglos y split -> S08Demo00ArreglosMain (Sesión 08) y S17Demo02LecturaMain split (Sesión 17)
- *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
- *   - Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
- *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
- *   - multi-catch y catch (RuntimeException) -> S16Demo02 EjecutorPrueba (Sesión 16)
- *   - LocalDate.of -> S12Demo02BuilderMain y S14Demo07 Mediator (Sesiones 12 y 14)
- *   - MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.vista;
@@ -40,9 +25,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+// Visto en clase: MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
 public class VistaConsola {
+    // Visto en clase: métodos y miembros static -> S05Demo02ConversorTemperatura (Sesión 05)
+    // Visto en clase: constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+    // Visto en clase: encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+    private static final String SEPARADOR = "------------------------------------------------------------";
+
+    // Visto en clase: Scanner y hasNextLine -> S03Scanner (Sesión 03) y S18Demo01 VistaConsola (Sesión 18)
     private final Scanner entrada;
 
+    // Visto en clase: clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
     public VistaConsola(Scanner entrada) {
         this.entrada = entrada;
     }
@@ -55,7 +48,19 @@ public class VistaConsola {
 
     public void mostrarTitulo(String titulo) {
         System.out.println();
+        // Visto en clase: toUpperCase / toLowerCase / contains -> S10Demo00SetMain normalizar y S18Demo00 correo.contains (Sesiones 10 y 18)
         System.out.println("=== " + titulo.toUpperCase() + " ===");
+    }
+
+    /** Encabezado de un bloque de referencia (ej. "Proveedores disponibles"). */
+    public void mostrarSeccion(String titulo) {
+        System.out.println();
+        System.out.println("--- " + titulo + " ---");
+    }
+
+    /** Línea que separa la lista de referencia de los datos que se van a pedir. */
+    public void mostrarSeparador() {
+        System.out.println(SEPARADOR);
     }
 
     public void mostrarExito(String mensaje) {
@@ -71,8 +76,10 @@ public class VistaConsola {
         System.out.println("[ALERTA] " + mensaje);
     }
 
+    // Visto en clase: List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
     /** Imprime cada línea; se usa para reportes y facturas (for-each, sesión 03). */
     public void mostrarLineas(List<String> lineas) {
+        // Visto en clase: ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
         for (String linea : lineas) {
             System.out.println(linea);
         }
@@ -80,11 +87,13 @@ public class VistaConsola {
 
     // ------------------------------------------------------------ Menús
 
+    // Visto en clase: Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
     /** Convierte una lista de textos en opciones numeradas desde 1 (orden conservado). */
     public static Map<String, String> numerar(List<String> textos) {
         Map<String, String> opciones = new LinkedHashMap<>();
         int numero = 1;
         for (String texto : textos) {
+            // Visto en clase: conversiones: Integer.parseInt, String.valueOf, cast (int)/(double) -> S04DemoConversiones (Sesión 04) y S08Demo00 cast (double) (Sesión 08)
             opciones.put(String.valueOf(numero), texto);
             numero++;
         }
@@ -102,9 +111,11 @@ public class VistaConsola {
         }
         System.out.println(" 0. " + textoSalida);
         System.out.print("Opción: ");
+        // Visto en clase: if / else if / else -> S02DemoDecisiones (Sesión 02)
         if (!entrada.hasNextLine()) {
             return "0";
         }
+        // Visto en clase: String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
         return entrada.nextLine().strip();
     }
 
@@ -114,6 +125,7 @@ public class VistaConsola {
     public String leerTexto(String etiqueta) {
         System.out.print(etiqueta);
         if (!entrada.hasNextLine()) {
+            // Visto en clase: try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
             throw new DatoInvalidoException("Entrada finalizada.");
         }
         return entrada.nextLine().strip();
@@ -170,13 +182,16 @@ public class VistaConsola {
         if (texto.isEmpty()) {
             return null;
         }
+        // Visto en clase: arreglos y split -> S08Demo00ArreglosMain (Sesión 08) y S17Demo02LecturaMain split (Sesión 17)
         String[] partes = texto.split("-");
         if (partes.length != 3) {
             throw new DatoInvalidoException("Use el formato AAAA-MM-DD.");
         }
         try {
+            // Visto en clase: LocalDate.of -> S12Demo02BuilderMain y S14Demo07 Mediator (Sesiones 12 y 14)
             return String.valueOf(LocalDate.of(Integer.parseInt(partes[0]), Integer.parseInt(partes[1]),
                     Integer.parseInt(partes[2])));
+        // Visto en clase: multi-catch y catch (RuntimeException) -> S16Demo02 EjecutorPrueba (Sesión 16)
         } catch (RuntimeException error) { // NumberFormatException o fecha imposible (ej. 2026-02-30)
             throw new DatoInvalidoException("Fecha inválida: " + texto + ".");
         }

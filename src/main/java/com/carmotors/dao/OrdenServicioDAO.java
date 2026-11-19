@@ -13,11 +13,8 @@
  *            actualizar, eliminar) más sus consultas específicas.
  *            Convención: buscarPor... devuelve null si no hay resultado
  *            (como Grupo.obtener de S08Demo04); el llamador lo comprueba.
- * Visto en clase (demos del curso):
- *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
- *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
- *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
- *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
+ * Visto en clase (demos del curso; cada concepto también se señala con
+ *   un comentario "// Visto en clase" junto al código donde se usa):
  *   - funciones de MySQL en el SQL (NOW, CURDATE, DATE_ADD, LAST_INSERT_ID) -> son SQL de MySQL, no Java; en Java solo se vio LocalDate.of (S12Demo02)
  * ============================================================
  */
@@ -29,11 +26,15 @@ import com.carmotors.modelo.OrdenServicio;
 import java.sql.SQLException;
 import java.util.List;
 
+// Visto en clase: interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+// Visto en clase: PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
 public interface OrdenServicioDAO {
+    // Visto en clase: try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
     int insertar(OrdenServicio orden) throws SQLException;
 
     OrdenServicio buscarPorId(int id) throws SQLException;
 
+    // Visto en clase: List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
     List<OrdenServicio> listar() throws SQLException;
 
     List<OrdenServicio> listarPorVehiculo(int vehiculoId) throws SQLException;

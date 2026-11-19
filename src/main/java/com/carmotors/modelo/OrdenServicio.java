@@ -8,19 +8,19 @@
  *            fecha de entrega, estado inicial). El patrón Builder evita un
  *            constructor con 8 parámetros difícil de leer y centraliza la
  *            validación en build().
- * Visto en clase (demos del curso):
- *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
- *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
- *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
- *   - funciones de MySQL en el SQL (NOW, CURDATE, DATE_ADD, LAST_INSERT_ID) -> son SQL de MySQL, no Java; en Java solo se vio LocalDate.of (S12Demo02)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.modelo;
 
 public final class OrdenServicio {
+    // Visto en clase: constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+    // Visto en clase: encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
     private final int id;
     private final int vehiculoId;
     private final TipoMantenimiento tipoMantenimiento;
+    // Visto en clase: funciones de MySQL en el SQL (NOW, CURDATE, DATE_ADD, LAST_INSERT_ID) -> son SQL de MySQL, no Java; en Java solo se vio LocalDate.of (S12Demo02)
     private final String fechaRecepcion;  // "AAAA-MM-DD HH:MM:SS"; la asigna MySQL (NOW()) al insertar
     private final String fechaEntrega;    // null hasta que se entrega
     private final String descripcionProblema;
@@ -28,6 +28,7 @@ public final class OrdenServicio {
     private final EstadoServicio estado;
 
     // Package-private: solo OrdenServicioBuilder (mismo paquete) puede crearla.
+    // Visto en clase: clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
     OrdenServicio(int id, int vehiculoId, TipoMantenimiento tipoMantenimiento, String fechaRecepcion,
                   String fechaEntrega, String descripcionProblema, int costoManoObra,
                   EstadoServicio estado) {

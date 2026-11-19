@@ -14,20 +14,8 @@
  *            controlador (como S18Demo01UsuariosMain con UsuarioController);
  *            el controlador crea su servicio y cada servicio sus DAO, así Main
  *            no instancia nada de las capas inferiores.
- * Visto en clase (demos del curso):
- *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
- *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
- *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
- *   - herencia extends / super(...) -> S07Demo00 Estudiante extends Usuario (Sesión 07)
- *   - @Override y polimorfismo -> S07Demo01 EnvioExpress y S07Demo02PolimorfismoMain (Sesión 07)
- *   - modificador protected -> S07Demo00 Usuario.describirIdentidad (Sesión 07)
- *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
- *   - PATRÓN SINGLETON -> S12Demo04 ConfiguracionSistema (Sesión 12)
- *   - PATRÓN OBSERVER -> S14Demo01 PublicadorPedidos (Sesión 14)
- *   - PATRÓN TEMPLATE METHOD (método final + hooks) -> S14Demo05 ProcesoReporte (Sesión 14)
- *   - referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
- *   - MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
- *   - expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.controlador;
@@ -47,15 +35,25 @@ import com.carmotors.vista.VistaConsola;
 
 import java.sql.SQLException;
 
+// Visto en clase: herencia extends / super(...) -> S07Demo00 Estudiante extends Usuario (Sesión 07)
+// Visto en clase: PATRÓN TEMPLATE METHOD (método final + hooks) -> S14Demo05 ProcesoReporte (Sesión 14)
+// Visto en clase: MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
 public class MenuPrincipalController extends ControladorBase {
+    // Visto en clase: constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+    // Visto en clase: encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
     private final MenuPrincipal vista;
 
+    // Visto en clase: clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
     public MenuPrincipalController(VistaConsola consola, MenuPrincipal vista) {
         super(consola, vista);
         this.vista = vista;
         // Observer: las alertas de stock bajo se muestran automáticamente en la consola.
+        // Visto en clase: PATRÓN SINGLETON -> S12Demo04 ConfiguracionSistema (Sesión 12)
+        // Visto en clase: PATRÓN OBSERVER -> S14Demo01 PublicadorPedidos (Sesión 14)
+        // Visto en clase: referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
         PublicadorInventario.getInstancia().suscribir(new AlertaStockObservador(consola::mostrarAlerta));
         // Command: cada opción crea el módulo en el momento en que se necesita.
+        // Visto en clase: expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
         registrar("1", () -> new InventarioController(consola, new InventarioVista(consola)).iniciar());
         registrar("2", () -> new OrdenServicioController(consola, new OrdenServicioVista(consola)).iniciar());
         registrar("3", () -> new ClienteController(consola, new ClienteVista(consola)).iniciar());
@@ -67,6 +65,7 @@ public class MenuPrincipalController extends ControladorBase {
     /** Comprueba la configuración y la conexión con MySQL; false si no se puede continuar. */
     public boolean conectar() {
         vista.mostrarInicio();
+        // Visto en clase: try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
         try {
             if (!ConexionFactory.getInstancia().probarConexion()) {
                 consola.mostrarError("La conexión a MySQL no es válida.");
@@ -86,6 +85,8 @@ public class MenuPrincipalController extends ControladorBase {
         return true;
     }
 
+    // Visto en clase: @Override y polimorfismo -> S07Demo01 EnvioExpress y S07Demo02PolimorfismoMain (Sesión 07)
+    // Visto en clase: modificador protected -> S07Demo00 Usuario.describirIdentidad (Sesión 07)
     @Override
     protected void alIniciar() {
         vista.mostrarBienvenida();

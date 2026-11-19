@@ -13,22 +13,8 @@
  *            (qué pedir, qué reporte generar) lo decide ReporteController.
  *            Todos los reportes comparten el mismo marco (separador, título,
  *            cuerpo o mensaje sin datos), escrito una sola vez en imprimir().
- * Visto en clase (demos del curso):
- *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
- *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
- *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
- *   - @Override y polimorfismo -> S07Demo01 EnvioExpress y S07Demo02PolimorfismoMain (Sesión 07)
- *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
- *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
- *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
- *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
- *   - List.of / List.copyOf -> S19Demo03ReglasOrdenMain List.of y S20Demo02 Orden List.copyOf (Sesiones 19 y 20)
- *   - Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
- *   - MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
- *   - expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
- *   - referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
- *   - Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
- *   - Stream: distinct / sorted / mapToInt+sum / reduce(0, Integer::sum) -> S20Demo02OrdenesMain (Sesión 20)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.vista;
@@ -46,9 +32,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+// Visto en clase: interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+// Visto en clase: MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
 public class ReporteVista implements VistaMenu {
+    // Visto en clase: constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+    // Visto en clase: encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
     private static final String SEPARADOR = "==============================================================";
     private static final String SIN_DATOS = "No hay datos para este reporte.";
+    // Visto en clase: List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+    // Visto en clase: List.of / List.copyOf -> S19Demo03ReglasOrdenMain List.of y S20Demo02 Orden List.copyOf (Sesiones 19 y 20)
     private static final List<String> OPCIONES = List.of(
             "Servicios más solicitados",
             "Productividad por técnico",
@@ -59,15 +51,18 @@ public class ReporteVista implements VistaMenu {
 
     private final VistaConsola consola;
 
+    // Visto en clase: clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
     public ReporteVista(VistaConsola consola) {
         this.consola = consola;
     }
 
+    // Visto en clase: @Override y polimorfismo -> S07Demo01 EnvioExpress y S07Demo02PolimorfismoMain (Sesión 07)
     @Override
     public String titulo() {
         return "Reportes gerenciales";
     }
 
+    // Visto en clase: Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
     @Override
     public Map<String, String> opciones() {
         return VistaConsola.numerar(OPCIONES);
@@ -82,8 +77,13 @@ public class ReporteVista implements VistaMenu {
 
     public void mostrarServiciosSolicitados(List<ResumenTipoServicio> porTipo, List<ResumenDescripcion> porDescripcion) {
         List<String> lineas = new ArrayList<>();
+        // Visto en clase: if / else if / else -> S02DemoDecisiones (Sesión 02)
+        // Visto en clase: referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
+        // Visto en clase: Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
+        // Visto en clase: Stream: distinct / sorted / mapToInt+sum / reduce(0, Integer::sum) -> S20Demo02OrdenesMain (Sesión 20)
         if (porTipo.stream().map(ResumenTipoServicio::getSolicitudes).reduce(0, Integer::sum) > 0) {
             lineas.add("Por tipo de mantenimiento (ingresos de órdenes con trabajo terminado):");
+            // Visto en clase: expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
             lineas.addAll(porTipo.stream()
                     .map(r -> "  " + Formato.ajustar(r.getTipo().getDescripcion(), 12)
                             + " solicitudes: " + Formato.derecha(String.valueOf(r.getSolicitudes()), 3)
@@ -103,6 +103,7 @@ public class ReporteVista implements VistaMenu {
     // ------------------------------------------------------------ Productividad por técnico
 
     public void mostrarProductividad(List<ProductividadTecnico> filas) {
+        // Visto en clase: operador ternario ? : -> S02DemoOpciones (Sesión 02)
         imprimir("Productividad por técnico", filas.stream()
                 .map(p -> Formato.ajustar(p.getTecnico().getNombre() + (p.getTecnico().isActivo() ? "" : " (inactivo)"), 26)
                         + " terminadas: " + Formato.derecha(String.valueOf(p.getTerminadas()), 2)

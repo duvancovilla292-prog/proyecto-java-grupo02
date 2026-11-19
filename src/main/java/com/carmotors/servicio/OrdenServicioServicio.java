@@ -11,22 +11,8 @@
  *            servicio quien llama al inventario para deducir el stock y al
  *            DAO de servicios para cambiar el estado. El controlador nunca
  *            coordina entidades; solo pide la operación.
- * Visto en clase (demos del curso):
- *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
- *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
- *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
- *   - operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
- *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
- *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
- *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
- *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
- *   - PATRÓN BUILDER -> S12Demo02 SolicitudBuilder (Sesión 12)
- *   - PATRÓN STATE -> S14Demo04 EstadoPedido (Sesión 14)
- *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
- *   - expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
- *   - Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
- *   - Stream: count / anyMatch / Arrays.stream -> S20Demo01FuentesMain (Sesión 20)
- *   - funciones de MySQL en el SQL (NOW, CURDATE, DATE_ADD, LAST_INSERT_ID) -> son SQL de MySQL, no Java; en Java solo se vio LocalDate.of (S12Demo02)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.servicio;
@@ -61,6 +47,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class OrdenServicioServicio {
+    // Visto en clase: constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+    // Visto en clase: encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+    // Visto en clase: PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
     private final OrdenServicioDAO ordenDAO;
     private final VehiculoDAO vehiculoDAO;
     private final TecnicoDAO tecnicoDAO;
@@ -68,6 +57,7 @@ public class OrdenServicioServicio {
     private final DetalleRepuestoDAO detalleDAO;
     private final InventarioServicio inventario;  // colaborador para reservar/deducir
 
+    // Visto en clase: clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
     /** Crea sus propios DAO JDBC y el servicio de inventario con el que reserva/deduce stock. */
     public OrdenServicioServicio() {
         this.ordenDAO = new OrdenServicioDAOJdbc(ConexionFactory.getInstancia());
@@ -80,10 +70,12 @@ public class OrdenServicioServicio {
 
     // ------------------------------------------------------------ Órdenes
 
+    // Visto en clase: try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
     /** Crea una orden Pendiente para el vehículo con esa placa (patrón Builder). */
     public int crearOrden(String placa, TipoMantenimiento tipo, String descripcion, int costoManoObra)
             throws SQLException {
         Vehiculo vehiculo = obtenerVehiculoPorPlaca(placa);
+        // Visto en clase: PATRÓN BUILDER -> S12Demo02 SolicitudBuilder (Sesión 12)
         OrdenServicio orden = new OrdenServicioBuilder()
                 .vehiculoId(vehiculo.getId())
                 .tipoMantenimiento(tipo)
@@ -95,21 +87,43 @@ public class OrdenServicioServicio {
 
     public OrdenServicio obtenerOrden(int id) throws SQLException {
         OrdenServicio orden = ordenDAO.buscarPorId(id);
+        // Visto en clase: if / else if / else -> S02DemoDecisiones (Sesión 02)
         if (orden == null) {
             throw new RecursoNoEncontradoException("No existe la orden de servicio " + id + ".");
         }
         return orden;
     }
 
+    // Visto en clase: List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
     public List<OrdenServicio> listarOrdenes() throws SQLException {
         return ordenDAO.listar();
     }
 
     /** Seguimiento: órdenes en un estado concreto (ej. "en espera" = PENDIENTE). */
     public List<OrdenServicio> listarPorEstado(EstadoServicio estado) throws SQLException {
+        // Visto en clase: expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
+        // Visto en clase: Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
         return ordenDAO.listar().stream()
                 .filter(orden -> orden.getEstado() == estado)
                 .toList();
+    }
+
+    /** Órdenes que aún admiten cambios, técnicos y repuestos (Pendiente o En Proceso, según el State). */
+    public List<OrdenServicio> listarAsignables() throws SQLException {
+        // Visto en clase: PATRÓN STATE -> S14Demo04 EstadoPedido (Sesión 14)
+        return ordenDAO.listar().stream()
+                .filter(orden -> FabricaEstadoOrden.crear(orden.getEstado()).permiteAsignaciones())
+                .toList();
+    }
+
+    /** Vehículos registrados: referencia al pedir la placa. */
+    public List<Vehiculo> listarVehiculos() throws SQLException {
+        return vehiculoDAO.listar();
+    }
+
+    /** Inventario: referencia al pedir el id del repuesto que se asigna. */
+    public List<Repuesto> listarRepuestos() throws SQLException {
+        return inventario.listarRepuestos();
     }
 
     public Vehiculo vehiculoDe(OrdenServicio orden) throws SQLException {
@@ -134,6 +148,13 @@ public class OrdenServicioServicio {
         return tecnicoDAO.listar();
     }
 
+    /** Solo los técnicos activos: los únicos que se pueden asignar. */
+    public List<Tecnico> listarTecnicosActivos() throws SQLException {
+        return tecnicoDAO.listar().stream()
+                .filter(Tecnico::isActivo)
+                .toList();
+    }
+
     public void cambiarActividadTecnico(int tecnicoId, boolean activo) throws SQLException {
         obtenerTecnico(tecnicoId);
         tecnicoDAO.actualizarActivo(tecnicoId, activo);
@@ -148,6 +169,7 @@ public class OrdenServicioServicio {
         if (!tecnico.isActivo()) {
             throw new ReglaNegocioException("El técnico " + tecnico.getNombre() + " está inactivo.");
         }
+        // Visto en clase: Stream: count / anyMatch / Arrays.stream -> S20Demo01FuentesMain (Sesión 20)
         boolean yaAsignado = tecnicosDe(servicioId).stream().anyMatch(t -> t.getId() == tecnicoId);
         if (yaAsignado) {
             throw new ReglaNegocioException("El técnico ya está asignado a esta orden.");
@@ -195,6 +217,7 @@ public class OrdenServicioServicio {
         List<DetalleRepuesto> reservados = repuestosDe(servicioId).stream()
                 .filter(d -> d.getEstado() == EstadoReserva.RESERVADO)
                 .toList();
+        // Visto en clase: ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
         for (DetalleRepuesto detalle : reservados) {
             inventario.deducirReservado(detalle.getRepuestoId(), detalle.getCantidad());
             detalleDAO.actualizarEstado(servicioId, detalle.getRepuestoId(), EstadoReserva.DEDUCIDO);
@@ -211,12 +234,14 @@ public class OrdenServicioServicio {
     /** Facturado -> Entregado. Registra la fecha de entrega. */
     public void entregar(int servicioId) throws SQLException {
         validarTransicion(obtenerOrden(servicioId), EstadoServicio.ENTREGADO);
+        // Visto en clase: funciones de MySQL en el SQL (NOW, CURDATE, DATE_ADD, LAST_INSERT_ID) -> son SQL de MySQL, no Java; en Java solo se vio LocalDate.of (S12Demo02)
         ordenDAO.registrarEntrega(servicioId);  // fecha de entrega = NOW() en MySQL
     }
 
     /** Consulta del patrón State: ¿la orden está en el estado previo a "destino"? */
     public void validarTransicion(OrdenServicio orden, EstadoServicio destino) {
         EstadoOrden actual = FabricaEstadoOrden.crear(orden.getEstado());
+        // Visto en clase: operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
         EstadoOrden siguiente = actual.avanzar();  // lanza excepción si es estado final
         if (siguiente.getCodigo() != destino) {
             throw new ReglaNegocioException("La orden " + orden.getId() + " está " + actual.getCodigo().getDescripcion()

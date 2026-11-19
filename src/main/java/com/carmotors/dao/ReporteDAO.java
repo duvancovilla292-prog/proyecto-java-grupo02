@@ -13,11 +13,8 @@
  *            Única) y permite que ReporteServicio dependa de UNA sola
  *            abstracción (Inversión de Dependencias). Cada método devuelve
  *            objetos del paquete modelo.reporte.
- * Visto en clase (demos del curso):
- *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
- *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
- *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
- *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.dao;
@@ -34,7 +31,11 @@ import com.carmotors.modelo.reporte.ResumenTipoServicio;
 import java.sql.SQLException;
 import java.util.List;
 
+// Visto en clase: interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+// Visto en clase: PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
 public interface ReporteDAO {
+    // Visto en clase: List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+    // Visto en clase: try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
     /** Por tipo de mantenimiento: órdenes, mano de obra terminada y venta de repuestos deducidos. */
     List<ResumenTipoServicio> resumenPorTipo() throws SQLException;
 
