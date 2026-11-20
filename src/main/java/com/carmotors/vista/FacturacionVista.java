@@ -9,24 +9,8 @@
  *            hace aquí. El controlador entrega esas líneas a
  *            FacturacionServicio, que es quien las guarda en el archivo .txt.
  *            Así la vista no escribe en disco y el servicio no da formato.
- * Visto en clase (demos del curso):
- *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
- *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
- *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
- *   - @Override y polimorfismo -> S07Demo01 EnvioExpress y S07Demo02PolimorfismoMain (Sesión 07)
- *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
- *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
- *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
- *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
- *   - conversiones: Integer.parseInt, String.valueOf, cast (int)/(double) -> S04DemoConversiones (Sesión 04) y S08Demo00 cast (double) (Sesión 08)
- *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
- *   - List.of / List.copyOf -> S19Demo03ReglasOrdenMain List.of y S20Demo02 Orden List.copyOf (Sesiones 19 y 20)
- *   - Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
- *   - MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
- *   - expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
- *   - referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
- *   - Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
- *   - Stream: distinct / sorted / mapToInt+sum / reduce(0, Integer::sum) -> S20Demo02OrdenesMain (Sesión 20)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.vista;
@@ -39,9 +23,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+// Visto en clase: interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+// Visto en clase: MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
 public class FacturacionVista implements VistaMenu {
+    // Visto en clase: constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+    // Visto en clase: encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
     private static final String LINEA_DOBLE = "==============================================================";
     private static final String LINEA_SIMPLE = "--------------------------------------------------------------";
+    // Visto en clase: List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+    // Visto en clase: List.of / List.copyOf -> S19Demo03ReglasOrdenMain List.of y S20Demo02 Orden List.copyOf (Sesiones 19 y 20)
     private static final List<String> OPCIONES = List.of(
             "Facturar orden completada",
             "Listar facturas",
@@ -50,15 +40,18 @@ public class FacturacionVista implements VistaMenu {
 
     private final VistaConsola consola;
 
+    // Visto en clase: clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
     public FacturacionVista(VistaConsola consola) {
         this.consola = consola;
     }
 
+    // Visto en clase: @Override y polimorfismo -> S07Demo01 EnvioExpress y S07Demo02PolimorfismoMain (Sesión 07)
     @Override
     public String titulo() {
         return "Facturación";
     }
 
+    // Visto en clase: Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
     @Override
     public Map<String, String> opciones() {
         return VistaConsola.numerar(OPCIONES);
@@ -70,6 +63,7 @@ public class FacturacionVista implements VistaMenu {
     }
 
     public void mostrarFacturas(List<Factura> facturas) {
+        // Visto en clase: if / else if / else -> S02DemoDecisiones (Sesión 02)
         if (facturas.isEmpty()) {
             consola.mostrar("No hay facturas emitidas.");
             return;
@@ -77,6 +71,7 @@ public class FacturacionVista implements VistaMenu {
         consola.mostrar(Formato.ajustar("Factura", 9) + Formato.ajustar("Orden", 7) + Formato.ajustar("Emisión", 18)
                 + Formato.derecha("Repuestos", 12) + Formato.derecha("Mano obra", 12)
                 + Formato.derecha("Impuestos", 12) + Formato.derecha("Total", 12));
+        // Visto en clase: ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
         for (Factura f : facturas) {
             consola.mostrar(Formato.ajustar("#" + f.getId(), 9) + Formato.ajustar("#" + f.getServicioId(), 7)
                     + Formato.ajustar(Formato.fechaHora(f.getFechaEmision()), 18)
@@ -85,6 +80,9 @@ public class FacturacionVista implements VistaMenu {
                     + Formato.derecha(Formato.pesos(f.getImpuestos()), 12)
                     + Formato.derecha(Formato.pesos(f.getTotalFinal()), 12));
         }
+        // Visto en clase: referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
+        // Visto en clase: Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
+        // Visto en clase: Stream: distinct / sorted / mapToInt+sum / reduce(0, Integer::sum) -> S20Demo02OrdenesMain (Sesión 20)
         int facturado = facturas.stream().map(Factura::getTotalFinal).reduce(0, Integer::sum);
         consola.mostrar("Total facturado: " + Formato.pesos(facturado) + " en " + facturas.size() + " facturas.");
     }
@@ -117,6 +115,7 @@ public class FacturacionVista implements VistaMenu {
         lineas.add("  Modelo    : " + d.getVehiculo().getModelo());
         lineas.add("TRABAJO REALIZADO");
         lineas.add("  Problema  : " + d.getOrden().getDescripcionProblema());
+        // Visto en clase: operador ternario ? : -> S02DemoOpciones (Sesión 02)
         lineas.add("  Técnicos  : " + (tecnicos.isEmpty() ? "-" : tecnicos.toString()));
         lineas.add(LINEA_SIMPLE);
         lineas.add("REPUESTOS UTILIZADOS");
@@ -125,6 +124,8 @@ public class FacturacionVista implements VistaMenu {
         if (d.getRepuestos().isEmpty()) {
             lineas.add("  (Sin repuestos)");
         }
+        // Visto en clase: conversiones: Integer.parseInt, String.valueOf, cast (int)/(double) -> S04DemoConversiones (Sesión 04) y S08Demo00 cast (double) (Sesión 08)
+        // Visto en clase: expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
         lineas.addAll(d.getRepuestos().stream()
                 .map(r -> "  " + Formato.ajustar(r.getNombreRepuesto(), 28)
                         + Formato.derecha(String.valueOf(r.getCantidad()), 6)

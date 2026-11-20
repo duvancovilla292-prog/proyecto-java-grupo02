@@ -5,8 +5,8 @@
  *            con JOIN, GROUP BY y funciones de agregación.
  * Conceptos clave: PATRÓN DAO, try-with-resources (Connection,
  *            PreparedStatement, ResultSet), PreparedStatement con parámetros
- *            (evita inyección SQL), interfaz funcional propia + lambdas
- *            (sesión 19) para convertir cada fila en un objeto del modelo.
+ *            (evita inyección SQL), ResultSet.next() en un while para
+ *            convertir cada fila en un objeto del modelo (S18Demo01 UsuarioDAO).
  * Justificación: MySQL AGRUPA y SUMA (COUNT, SUM, LEFT JOIN, GROUP BY) y
  *            devuelve una fila por tipo, técnico, repuesto o proveedor; así no
  *            se traen tablas completas a memoria. Las REGLAS de negocio
@@ -15,18 +15,8 @@
  *            para no repetir números mágicos.
  *            Los montos se truncan a pesos enteros (TRUNCATE) igual que el
  *            resto de la aplicación, que trabaja con int.
- * Visto en clase (demos del curso):
- *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
- *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
- *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
- *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
- *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
- *   - conversiones: Integer.parseInt, String.valueOf, cast (int)/(double) -> S04DemoConversiones (Sesión 04) y S08Demo00 cast (double) (Sesión 08)
- *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
- *   - enum con atributos, values() y == -> S10Demo02 DiaSemana y S10Demo02EnumMain (Sesión 10)
- *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
- *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
- *   - expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.dao.jdbc;
@@ -56,8 +46,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+// Visto en clase: interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+// Visto en clase: PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
 public class ReporteDAOJdbc implements ReporteDAO {
     // Estados con el trabajo técnico terminado (ver EstadoServicio.trabajoTerminado).
+    // Visto en clase: constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+    // Visto en clase: enum con atributos, values() y == -> S10Demo02 DiaSemana y S10Demo02EnumMain (Sesión 10)
     private static final String TERMINADOS = "(" + EstadoServicio.COMPLETADO.getId() + ", "
             + EstadoServicio.FACTURADO.getId() + ", " + EstadoServicio.ENTREGADO.getId() + ")";
     private static final String DEDUCIDO = "'" + EstadoReserva.DEDUCIDO.name() + "'";
@@ -135,92 +129,142 @@ public class ReporteDAOJdbc implements ReporteDAO {
             + "FROM proveedores p LEFT JOIN evaluaciones_proveedor e ON e.proveedor_id = p.id "
             + "GROUP BY p.id, p.nombre, p.contacto, p.telefono, p.email ORDER BY p.id";
 
-    /** Convierte la fila actual del ResultSet en un objeto (se implementa con una lambda). */
-    private interface LectorFila<T> {
-        T leer(ResultSet fila) throws SQLException;
-    }
-
     private final ConexionFactory conexiones;
 
+    // Visto en clase: clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
     public ReporteDAOJdbc(ConexionFactory conexiones) {
         this.conexiones = conexiones;
     }
 
+    // Visto en clase: List / ArrayList -> S08Demo01ArrayListMain (Sesión 08)
+    // Visto en clase: try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
     @Override
     public List<ResumenTipoServicio> resumenPorTipo() throws SQLException {
-        return consultar(SQL_POR_TIPO, fila -> new ResumenTipoServicio(
-                TipoMantenimiento.desdeId(fila.getInt("tipo_id")), fila.getInt("solicitudes"),
-                fila.getInt("mano_obra"), fila.getInt("venta_repuestos")));
+        List<ResumenTipoServicio> resultado = new ArrayList<>();
+        // Visto en clase: JDBC: Connection, PreparedStatement, ResultSet, try-with-resources -> S18Demo01 UsuarioDAO (Sesión 18)
+        try (Connection conexion = conexiones.abrir();
+             PreparedStatement sentencia = conexion.prepareStatement(SQL_POR_TIPO);
+             ResultSet fila = sentencia.executeQuery()) {
+            // Visto en clase: ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
+            while (fila.next()) {
+                resultado.add(new ResumenTipoServicio(TipoMantenimiento.desdeId(fila.getInt("tipo_id")),
+                        fila.getInt("solicitudes"), fila.getInt("mano_obra"), fila.getInt("venta_repuestos")));
+            }
+        }
+        return resultado;
     }
 
     @Override
     public List<ResumenDescripcion> resumenPorDescripcion() throws SQLException {
-        return consultar(SQL_POR_DESCRIPCION,
-                fila -> new ResumenDescripcion(fila.getString("descripcion"), fila.getInt("cantidad")));
+        List<ResumenDescripcion> resultado = new ArrayList<>();
+        try (Connection conexion = conexiones.abrir();
+             PreparedStatement sentencia = conexion.prepareStatement(SQL_POR_DESCRIPCION);
+             ResultSet fila = sentencia.executeQuery()) {
+            while (fila.next()) {
+                resultado.add(new ResumenDescripcion(fila.getString("descripcion"), fila.getInt("cantidad")));
+            }
+        }
+        return resultado;
     }
 
     @Override
     public List<ProductividadTecnico> productividadTecnicos() throws SQLException {
-        return consultar(SQL_PRODUCTIVIDAD, fila -> new ProductividadTecnico(
-                new Tecnico(fila.getInt("id"), fila.getString("nombre"), fila.getString("especialidad"),
-                        fila.getBoolean("activo")),
-                fila.getInt("terminadas"), fila.getInt("en_curso"), fila.getInt("mano_obra")));
+        List<ProductividadTecnico> resultado = new ArrayList<>();
+        try (Connection conexion = conexiones.abrir();
+             PreparedStatement sentencia = conexion.prepareStatement(SQL_PRODUCTIVIDAD);
+             ResultSet fila = sentencia.executeQuery()) {
+            while (fila.next()) {
+                Tecnico tecnico = new Tecnico(fila.getInt("id"), fila.getString("nombre"),
+                        fila.getString("especialidad"), fila.getBoolean("activo"));
+                resultado.add(new ProductividadTecnico(tecnico, fila.getInt("terminadas"), fila.getInt("en_curso"),
+                        fila.getInt("mano_obra")));
+            }
+        }
+        return resultado;
     }
 
     @Override
     public List<ConsumoRepuesto> consumoRepuestos() throws SQLException {
-        return consultar(SQL_CONSUMO, fila -> new ConsumoRepuesto(fila.getInt("id"), fila.getString("nombre"),
-                fila.getInt("costo"), fila.getInt("usadas"), fila.getInt("reservadas"), fila.getInt("ingreso")));
+        List<ConsumoRepuesto> resultado = new ArrayList<>();
+        try (Connection conexion = conexiones.abrir();
+             PreparedStatement sentencia = conexion.prepareStatement(SQL_CONSUMO);
+             ResultSet fila = sentencia.executeQuery()) {
+            while (fila.next()) {
+                resultado.add(new ConsumoRepuesto(fila.getInt("id"), fila.getString("nombre"), fila.getInt("costo"),
+                        fila.getInt("usadas"), fila.getInt("reservadas"), fila.getInt("ingreso")));
+            }
+        }
+        return resultado;
     }
 
     @Override
     public List<AlertaStock> repuestosBajoMinimo() throws SQLException {
-        return consultar(SQL_BAJO_MINIMO, fila -> new AlertaStock(fila.getInt("id"), fila.getString("nombre"),
-                fila.getInt("cantidad_stock"), fila.getInt("cantidad_reservada"), fila.getInt("stock_minimo")));
+        List<AlertaStock> resultado = new ArrayList<>();
+        try (Connection conexion = conexiones.abrir();
+             PreparedStatement sentencia = conexion.prepareStatement(SQL_BAJO_MINIMO);
+             ResultSet fila = sentencia.executeQuery()) {
+            while (fila.next()) {
+                resultado.add(new AlertaStock(fila.getInt("id"), fila.getString("nombre"),
+                        fila.getInt("cantidad_stock"), fila.getInt("cantidad_reservada"), fila.getInt("stock_minimo")));
+            }
+        }
+        return resultado;
     }
 
     @Override
     public List<LotePorVencer> lotesPorVencer(int dias) throws SQLException {
-        return consultar(SQL_POR_VENCER, fila -> new LotePorVencer(fila.getString("codigo"),
-                fila.getString("repuesto"), fila.getString("fecha_caducidad"), fila.getInt("cantidad")), dias);
+        List<LotePorVencer> resultado = new ArrayList<>();
+        try (Connection conexion = conexiones.abrir();
+             PreparedStatement sentencia = conexion.prepareStatement(SQL_POR_VENCER)) {
+            sentencia.setInt(1, dias);
+            try (ResultSet fila = sentencia.executeQuery()) {
+                while (fila.next()) {
+                    resultado.add(new LotePorVencer(fila.getString("codigo"), fila.getString("repuesto"),
+                            fila.getString("fecha_caducidad"), fila.getInt("cantidad")));
+                }
+            }
+        }
+        return resultado;
     }
 
     @Override
     public List<CalendarioPreventivo> calendarioPreventivos(int meses, int dias) throws SQLException {
-        return consultar(SQL_CALENDARIO, fila -> new CalendarioPreventivo(
-                new Cliente(fila.getInt("cliente_id"), fila.getString("nombre"),
-                        fila.getString("documento_identidad"), fila.getString("telefono"), fila.getString("email")),
-                new Vehiculo(fila.getInt("vehiculo_id"), fila.getInt("cliente_id"), fila.getString("placa"),
-                        fila.getString("marca"), fila.getString("modelo")),
-                fila.getString("ultimo"), fila.getString("proximo"), fila.getString("hoy"),
-                fila.getString("limite"), fila.getBoolean("orden_abierta")), meses, dias);
+        List<CalendarioPreventivo> resultado = new ArrayList<>();
+        try (Connection conexion = conexiones.abrir();
+             PreparedStatement sentencia = conexion.prepareStatement(SQL_CALENDARIO)) {
+            sentencia.setInt(1, meses);
+            sentencia.setInt(2, dias);
+            try (ResultSet fila = sentencia.executeQuery()) {
+                while (fila.next()) {
+                    Cliente cliente = new Cliente(fila.getInt("cliente_id"), fila.getString("nombre"),
+                            fila.getString("documento_identidad"), fila.getString("telefono"), fila.getString("email"));
+                    Vehiculo vehiculo = new Vehiculo(fila.getInt("vehiculo_id"), fila.getInt("cliente_id"),
+                            fila.getString("placa"), fila.getString("marca"), fila.getString("modelo"));
+                    resultado.add(new CalendarioPreventivo(cliente, vehiculo, fila.getString("ultimo"),
+                            fila.getString("proximo"), fila.getString("hoy"), fila.getString("limite"),
+                            fila.getBoolean("orden_abierta")));
+                }
+            }
+        }
+        return resultado;
     }
 
     @Override
     public List<DesempenoProveedor> desempenoProveedores() throws SQLException {
-        return consultar(SQL_DESEMPENO, fila -> {
-            int cantidad = fila.getInt("evaluaciones");
-            // Cast a double (S08Demo00) para obtener el promedio con decimales.
-            double calidad = cantidad == 0 ? 0 : (double) fila.getInt("suma_calidad") / cantidad;
-            double puntualidad = cantidad == 0 ? 0 : (double) fila.getInt("suma_puntualidad") / cantidad;
-            return new DesempenoProveedor(new Proveedor(fila.getInt("id"), fila.getString("nombre"),
-                    fila.getString("contacto"), fila.getString("telefono"), fila.getString("email")),
-                    cantidad, calidad, puntualidad);
-        });
-    }
-
-    // Ejecuta la consulta con sus parámetros enteros (en orden) y convierte cada fila con el lector.
-    private <T> List<T> consultar(String sql, LectorFila<T> lector, int... parametros) throws SQLException {
-        List<T> resultado = new ArrayList<>();
+        List<DesempenoProveedor> resultado = new ArrayList<>();
         try (Connection conexion = conexiones.abrir();
-             PreparedStatement sentencia = conexion.prepareStatement(sql)) {
-            for (int i = 0; i < parametros.length; i++) {
-                sentencia.setInt(i + 1, parametros[i]);
-            }
-            try (ResultSet filas = sentencia.executeQuery()) {
-                while (filas.next()) {
-                    resultado.add(lector.leer(filas));
-                }
+             PreparedStatement sentencia = conexion.prepareStatement(SQL_DESEMPENO);
+             ResultSet fila = sentencia.executeQuery()) {
+            while (fila.next()) {
+                int cantidad = fila.getInt("evaluaciones");
+                // Cast a double (S08Demo00) para obtener el promedio con decimales.
+                // Visto en clase: operador ternario ? : -> S02DemoOpciones (Sesión 02)
+                // Visto en clase: conversiones: Integer.parseInt, String.valueOf, cast (int)/(double) -> S04DemoConversiones (Sesión 04) y S08Demo00 cast (double) (Sesión 08)
+                double calidad = cantidad == 0 ? 0 : (double) fila.getInt("suma_calidad") / cantidad;
+                double puntualidad = cantidad == 0 ? 0 : (double) fila.getInt("suma_puntualidad") / cantidad;
+                Proveedor proveedor = new Proveedor(fila.getInt("id"), fila.getString("nombre"),
+                        fila.getString("contacto"), fila.getString("telefono"), fila.getString("email"));
+                resultado.add(new DesempenoProveedor(proveedor, cantidad, calidad, puntualidad));
             }
         }
         return resultado;

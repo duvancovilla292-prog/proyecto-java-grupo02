@@ -7,13 +7,8 @@
  * Justificación: el constructor comprueba que total = repuestos + mano
  *            de obra + impuestos; así una factura incoherente no puede
  *            existir en memoria.
- * Visto en clase (demos del curso):
- *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
- *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
- *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
- *   - operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
- *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
- *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.modelo;
@@ -21,6 +16,8 @@ package com.carmotors.modelo;
 import com.carmotors.excepcion.DatoInvalidoException;
 
 public class Factura {
+    // Visto en clase: constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+    // Visto en clase: encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
     private final int id;
     private final int servicioId;
     private final String fechaEmision;  // null hasta que se guarda
@@ -29,9 +26,13 @@ public class Factura {
     private final int impuestos;
     private final int totalFinal;
 
+    // Visto en clase: clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
     public Factura(int id, int servicioId, String fechaEmision, int totalRepuestos,
                    int totalManoObra, int impuestos, int totalFinal) {
+        // Visto en clase: operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
+        // Visto en clase: if / else if / else -> S02DemoDecisiones (Sesión 02)
         if (servicioId <= 0) {
+            // Visto en clase: try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
             throw new DatoInvalidoException("El servicio es obligatorio.");
         }
         if (totalRepuestos < 0 || totalManoObra < 0 || impuestos < 0

@@ -9,27 +9,8 @@
  * Justificación: las validaciones de unicidad (documento, email, placa)
  *            se hacen ANTES de llamar al DAO para dar mensajes claros; la BD
  *            conserva las restricciones UNIQUE como respaldo.
- * Visto en clase (demos del curso):
- *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
- *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
- *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
- *   - operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
- *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
- *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
- *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
- *   - break / continue -> S03DemoFor (Sesión 03)
- *   - String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
- *   - toUpperCase / toLowerCase / contains -> S10Demo00SetMain normalizar y S18Demo00 correo.contains (Sesiones 10 y 18)
- *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
- *   - Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
- *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
- *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
- *   - expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
- *   - Predicate<T> / Comparator<T> / compareTo -> S19Demo03ReglasOrdenMain (Sesión 19)
- *   - referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
- *   - Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
- *   - Stream: count / anyMatch / Arrays.stream -> S20Demo01FuentesMain (Sesión 20)
- *   - Stream: distinct / sorted / mapToInt+sum / reduce(0, Integer::sum) -> S20Demo02OrdenesMain (Sesión 20)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.servicio;
@@ -51,23 +32,25 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class ClienteServicio {
+    // Visto en clase: constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+    // Visto en clase: encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+    // Visto en clase: PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
     private final ClienteDAO clienteDAO;
     private final VehiculoDAO vehiculoDAO;
     private final OrdenServicioDAO ordenDAO;
 
+    // Visto en clase: clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
     /** Crea sus propios DAO JDBC con la conexión del Singleton. */
     public ClienteServicio() {
-        this(new ClienteDAOJdbc(ConexionFactory.getInstancia()), new VehiculoDAOJdbc(ConexionFactory.getInstancia()),
-                new OrdenServicioDAOJdbc(ConexionFactory.getInstancia()));
+        this.clienteDAO = new ClienteDAOJdbc(ConexionFactory.getInstancia());
+        this.vehiculoDAO = new VehiculoDAOJdbc(ConexionFactory.getInstancia());
+        this.ordenDAO = new OrdenServicioDAOJdbc(ConexionFactory.getInstancia());
     }
 
-    public ClienteServicio(ClienteDAO clienteDAO, VehiculoDAO vehiculoDAO, OrdenServicioDAO ordenDAO) {
-        this.clienteDAO = clienteDAO;
-        this.vehiculoDAO = vehiculoDAO;
-        this.ordenDAO = ordenDAO;
-    }
-
+    // Visto en clase: try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
     public int registrarCliente(String nombre, String documento, String telefono, String email) throws SQLException {
+        // Visto en clase: operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
+        // Visto en clase: if / else if / else -> S02DemoDecisiones (Sesión 02)
         Cliente nuevo = new Cliente(0, nombre, documento, telefono, email); // valida formato
         if (clienteDAO.buscarPorDocumento(nuevo.getDocumento()) != null) {
             throw new ReglaNegocioException("Ya existe un cliente con el documento " + nuevo.getDocumento() + ".");
@@ -84,11 +67,19 @@ public class ClienteServicio {
         clienteDAO.actualizar(modificado);
     }
 
+    // Visto en clase: List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+    /** Vehículos registrados: referencia al pedir la placa. */
+    public List<Vehiculo> listarVehiculos() throws SQLException {
+        return vehiculoDAO.listar();
+    }
+
     public List<Cliente> listarClientes() throws SQLException {
         return clienteDAO.listar();
     }
 
     public Cliente obtenerPorDocumento(String documento) throws SQLException {
+        // Visto en clase: operador ternario ? : -> S02DemoOpciones (Sesión 02)
+        // Visto en clase: String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
         Cliente cliente = clienteDAO.buscarPorDocumento(documento == null ? "" : documento.strip());
         if (cliente == null) {
             throw new RecursoNoEncontradoException("No existe un cliente con el documento " + documento + ".");
@@ -120,9 +111,15 @@ public class ClienteServicio {
 
     /** Historial: todas las órdenes de todos los vehículos del cliente, de la más reciente a la más antigua. */
     public List<OrdenServicio> historialServicios(String documentoCliente) throws SQLException {
+        // Visto en clase: referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
+        // Visto en clase: Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
         List<Integer> idsVehiculos = vehiculosDe(documentoCliente).stream()
                 .map(Vehiculo::getId)
                 .toList();
+        // Visto en clase: toUpperCase / toLowerCase / contains -> S10Demo00SetMain normalizar y S18Demo00 correo.contains (Sesiones 10 y 18)
+        // Visto en clase: expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
+        // Visto en clase: Predicate<T> / Comparator<T> / compareTo -> S19Demo03ReglasOrdenMain (Sesión 19)
+        // Visto en clase: Stream: distinct / sorted / mapToInt+sum / reduce(0, Integer::sum) -> S20Demo02OrdenesMain (Sesión 20)
         return ordenDAO.listar().stream()
                 .filter(orden -> idsVehiculos.contains(orden.getVehiculoId()))
                 .sorted((a, b) -> b.getFechaRecepcion().compareTo(a.getFechaRecepcion()))
@@ -131,6 +128,7 @@ public class ClienteServicio {
 
     // El email es UNIQUE: se rechaza si otro cliente (id distinto) ya lo usa.
     private void validarEmailLibre(String email, int idPropio) throws SQLException {
+        // Visto en clase: Stream: count / anyMatch / Arrays.stream -> S20Demo01FuentesMain (Sesión 20)
         boolean usado = clienteDAO.listar().stream()
                 .anyMatch(c -> c.getEmail().equalsIgnoreCase(email) && c.getId() != idPropio);
         if (usado) {

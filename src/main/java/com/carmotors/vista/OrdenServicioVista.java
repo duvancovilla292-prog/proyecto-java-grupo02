@@ -8,22 +8,10 @@
  * Justificación: el detalle muestra en un solo lugar vehículo, estado,
  *            técnicos y repuestos (RESERVADO/DEDUCIDO), lo que resuelve la
  *            "planificación ineficiente": se ve qué está en espera, en
- *            proceso o listo para entregar.
- * Visto en clase (demos del curso):
- *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
- *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
- *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
- *   - @Override y polimorfismo -> S07Demo01 EnvioExpress y S07Demo02PolimorfismoMain (Sesión 07)
- *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
- *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
- *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
- *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
- *   - conversiones: Integer.parseInt, String.valueOf, cast (int)/(double) -> S04DemoConversiones (Sesión 04) y S08Demo00 cast (double) (Sesión 08)
- *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
- *   - List.of / List.copyOf -> S19Demo03ReglasOrdenMain List.of y S20Demo02 Orden List.copyOf (Sesiones 19 y 20)
- *   - Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
- *   - enum con atributos, values() y == -> S10Demo02 DiaSemana y S10Demo02EnumMain (Sesión 10)
- *   - MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
+ *            proceso o listo para entregar. mostrarRepuestosOrden se usa en
+ *            el detalle y como referencia al quitar un repuesto.
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.vista;
@@ -38,7 +26,12 @@ import com.carmotors.modelo.Vehiculo;
 import java.util.List;
 import java.util.Map;
 
+// Visto en clase: interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+// Visto en clase: MVC: vista / controlador -> S18Demo01 VistaConsola y UsuarioController (Sesión 18)
 public class OrdenServicioVista implements VistaMenu {
+    // Visto en clase: constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+    // Visto en clase: List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+    // Visto en clase: List.of / List.copyOf -> S19Demo03ReglasOrdenMain List.of y S20Demo02 Orden List.copyOf (Sesiones 19 y 20)
     private static final List<String> OPCIONES = List.of(
             "Crear orden de servicio",
             "Listar todas las órdenes",
@@ -61,17 +54,21 @@ public class OrdenServicioVista implements VistaMenu {
             "Eliminar técnico sin historial",
             "Recepción rápida: cliente + vehículo + orden");
 
+    // Visto en clase: encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
     private final VistaConsola consola;
 
+    // Visto en clase: clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
     public OrdenServicioVista(VistaConsola consola) {
         this.consola = consola;
     }
 
+    // Visto en clase: @Override y polimorfismo -> S07Demo01 EnvioExpress y S07Demo02PolimorfismoMain (Sesión 07)
     @Override
     public String titulo() {
         return "Gestión de servicios";
     }
 
+    // Visto en clase: Map / HashMap / LinkedHashMap / Map.Entry -> S10Demo01MapMain (Sesión 10)
     @Override
     public Map<String, String> opciones() {
         return VistaConsola.numerar(OPCIONES);
@@ -83,6 +80,8 @@ public class OrdenServicioVista implements VistaMenu {
     }
 
     public void mostrarTiposMantenimiento() {
+        // Visto en clase: ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
+        // Visto en clase: enum con atributos, values() y == -> S10Demo02 DiaSemana y S10Demo02EnumMain (Sesión 10)
         for (TipoMantenimiento tipo : TipoMantenimiento.values()) {
             consola.mostrar("  " + tipo.getId() + ". " + tipo.getDescripcion());
         }
@@ -95,6 +94,7 @@ public class OrdenServicioVista implements VistaMenu {
     }
 
     public void mostrarOrdenes(List<OrdenServicio> ordenes) {
+        // Visto en clase: if / else if / else -> S02DemoDecisiones (Sesión 02)
         if (ordenes.isEmpty()) {
             consola.mostrar("No hay órdenes para mostrar.");
             return;
@@ -102,6 +102,7 @@ public class OrdenServicioVista implements VistaMenu {
         consola.mostrar(Formato.ajustar("#", 5) + Formato.ajustar("Recepción", 18) + Formato.ajustar("Vehíc.", 7)
                 + Formato.ajustar("Tipo", 12) + Formato.ajustar("Estado", 12) + "Descripción");
         for (OrdenServicio o : ordenes) {
+            // Visto en clase: conversiones: Integer.parseInt, String.valueOf, cast (int)/(double) -> S04DemoConversiones (Sesión 04) y S08Demo00 cast (double) (Sesión 08)
             consola.mostrar(Formato.ajustar(String.valueOf(o.getId()), 5)
                     + Formato.ajustar(Formato.fechaHora(o.getFechaRecepcion()), 18)
                     + Formato.ajustar("#" + o.getVehiculoId(), 7)
@@ -113,6 +114,7 @@ public class OrdenServicioVista implements VistaMenu {
     public void mostrarDetalle(OrdenServicio orden, Vehiculo vehiculo, List<Tecnico> tecnicos,
                                List<DetalleRepuesto> repuestos) {
         consola.mostrar("Orden #" + orden.getId() + " | Estado: " + orden.getEstado().getDescripcion());
+        // Visto en clase: operador ternario ? : -> S02DemoOpciones (Sesión 02)
         consola.mostrar("Vehículo : " + (vehiculo == null ? "-" : vehiculo.descripcion()));
         consola.mostrar("Tipo     : " + orden.getTipoMantenimiento().getDescripcion());
         consola.mostrar("Recepción: " + Formato.fechaHora(orden.getFechaRecepcion())
@@ -127,6 +129,11 @@ public class OrdenServicioVista implements VistaMenu {
             consola.mostrar("  #" + t.getId() + " " + t.getNombre() + " - " + t.getEspecialidad());
         }
         consola.mostrar("Repuestos:");
+        mostrarRepuestosOrden(repuestos);
+    }
+
+    /** Repuestos asignados a una orden (en el detalle y como referencia al quitar uno). */
+    public void mostrarRepuestosOrden(List<DetalleRepuesto> repuestos) {
         if (repuestos.isEmpty()) {
             consola.mostrar("  (Sin repuestos asignados)");
         }

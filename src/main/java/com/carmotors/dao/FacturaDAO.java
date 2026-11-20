@@ -13,11 +13,8 @@
  *            actualizar, eliminar) más sus consultas específicas.
  *            Convención: buscarPor... devuelve null si no hay resultado
  *            (como Grupo.obtener de S08Demo04); el llamador lo comprueba.
- * Visto en clase (demos del curso):
- *   - interfaces e implements -> S07Demo04 Notificable (Sesión 07)
- *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
- *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
- *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.dao;
@@ -27,11 +24,15 @@ import com.carmotors.modelo.Factura;
 import java.sql.SQLException;
 import java.util.List;
 
+// Visto en clase: interfaces e implements -> S07Demo04 Notificable (Sesión 07)
+// Visto en clase: PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
 public interface FacturaDAO {
+    // Visto en clase: try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
     int insertar(Factura factura) throws SQLException;
 
     Factura buscarPorServicio(int servicioId) throws SQLException;
 
+    // Visto en clase: List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
     List<Factura> listar() throws SQLException;
 
     /** Actualiza los totales de una factura existente. */

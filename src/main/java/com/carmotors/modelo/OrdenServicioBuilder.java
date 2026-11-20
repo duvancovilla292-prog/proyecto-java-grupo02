@@ -10,23 +10,17 @@
  *            - El DAO RECONSTRUYE órdenes leídas de la BD (con id, estado
  *              y fecha de entrega).
  *            Un único Builder cubre ambos casos sin multiplicar constructores.
- * Visto en clase (demos del curso):
- *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
- *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
- *   - operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
- *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
- *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
- *   - String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
- *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
- *   - PATRÓN BUILDER -> S12Demo02 SolicitudBuilder (Sesión 12)
- *   - Predicate<T> / Comparator<T> / compareTo -> S19Demo03ReglasOrdenMain (Sesión 19)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.modelo;
 
 import com.carmotors.excepcion.DatoInvalidoException;
 
+// Visto en clase: PATRÓN BUILDER -> S12Demo02 SolicitudBuilder (Sesión 12)
 public class OrdenServicioBuilder {
+    // Visto en clase: encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
     private int id;                                          // 0 = nueva
     private int vehiculoId;
     private TipoMantenimiento tipoMantenimiento;
@@ -62,6 +56,8 @@ public class OrdenServicioBuilder {
     }
 
     public OrdenServicioBuilder descripcionProblema(String valor) {
+        // Visto en clase: operador ternario ? : -> S02DemoOpciones (Sesión 02)
+        // Visto en clase: String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
         descripcionProblema = valor == null ? "" : valor.strip();
         return this;
     }
@@ -78,7 +74,10 @@ public class OrdenServicioBuilder {
 
     /** Valida los datos acumulados y crea la orden inmutable. */
     public OrdenServicio build() {
+        // Visto en clase: operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
+        // Visto en clase: if / else if / else -> S02DemoDecisiones (Sesión 02)
         if (id < 0 || vehiculoId <= 0) {
+            // Visto en clase: try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
             throw new DatoInvalidoException("La orden requiere un vehículo válido.");
         }
         if (tipoMantenimiento == null || estado == null) {
@@ -91,6 +90,7 @@ public class OrdenServicioBuilder {
             throw new DatoInvalidoException("El costo de mano de obra no puede ser negativo.");
         }
         // Las fechas en formato AAAA-MM-DD HH:MM:SS se comparan con compareTo (orden alfabético = cronológico).
+        // Visto en clase: Predicate<T> / Comparator<T> / compareTo -> S19Demo03ReglasOrdenMain (Sesión 19)
         if (fechaEntrega != null && fechaRecepcion != null && fechaEntrega.compareTo(fechaRecepcion) < 0) {
             throw new DatoInvalidoException("La entrega no puede ser anterior a la recepción.");
         }

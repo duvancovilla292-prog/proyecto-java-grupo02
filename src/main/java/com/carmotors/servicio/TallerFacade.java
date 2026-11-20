@@ -12,13 +12,8 @@
  *            coordina ClienteServicio y OrdenServicioServicio sin duplicar sus
  *            reglas: cada servicio sigue validando lo suyo (SRP), y quien usa la
  *            fachada no necesita conocer el orden de los pasos.
- * Visto en clase (demos del curso):
- *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
- *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
- *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
- *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
- *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
- *   - PATRÓN FACADE -> S13Demo01 CheckoutFacade (Sesión 13)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.servicio;
@@ -29,19 +24,31 @@ import com.carmotors.modelo.TipoMantenimiento;
 import com.carmotors.modelo.Vehiculo;
 
 import java.sql.SQLException;
+import java.util.List;
 
+// Visto en clase: PATRÓN FACADE -> S13Demo01 CheckoutFacade (Sesión 13)
 public class TallerFacade {
+    // Visto en clase: constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+    // Visto en clase: encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
     private final ClienteServicio clientes;
     private final OrdenServicioServicio ordenes;
 
+    // Visto en clase: clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
     /** Crea los servicios que coordina. */
     public TallerFacade() {
-        this(new ClienteServicio(), new OrdenServicioServicio());
+        this.clientes = new ClienteServicio();
+        this.ordenes = new OrdenServicioServicio();
     }
 
-    public TallerFacade(ClienteServicio clientes, OrdenServicioServicio ordenes) {
-        this.clientes = clientes;
-        this.ordenes = ordenes;
+    // Visto en clase: try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
+    /** Clientes registrados: referencia al pedir el documento. */
+    public List<Cliente> listarClientes() throws SQLException {
+        return clientes.listarClientes();
+    }
+
+    /** Vehículos del cliente: referencia al pedir la placa. */
+    public List<Vehiculo> vehiculosDe(String documento) throws SQLException {
+        return clientes.vehiculosDe(documento);
     }
 
     /** true si hay que pedir los datos del cliente porque aún no existe. */
@@ -62,6 +69,7 @@ public class TallerFacade {
     public int recibirVehiculo(String documento, String nombre, String telefono, String email,
                                String placa, String marca, String modelo,
                                TipoMantenimiento tipo, String descripcion, int costoManoObra) throws SQLException {
+        // Visto en clase: if / else if / else -> S02DemoDecisiones (Sesión 02)
         if (esClienteNuevo(documento)) {
             clientes.registrarCliente(nombre, documento, telefono, email);
         }

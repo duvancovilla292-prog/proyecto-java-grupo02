@@ -13,25 +13,8 @@
  *            (validar parámetros, ordenar rankings, top N, filtrar a quién
  *            notificar). Devuelve objetos de modelo.reporte; la presentación
  *            la hace ReporteVista y el flujo lo coordina ReporteController.
- * Visto en clase (demos del curso):
- *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
- *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
- *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
- *   - operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
- *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
- *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
- *   - ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
- *   - break / continue -> S03DemoFor (Sesión 03)
- *   - String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
- *   - conversiones: Integer.parseInt, String.valueOf, cast (int)/(double) -> S04DemoConversiones (Sesión 04) y S08Demo00 cast (double) (Sesión 08)
- *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
- *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
- *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
- *   - expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
- *   - Predicate<T> / Comparator<T> / compareTo -> S19Demo03ReglasOrdenMain (Sesión 19)
- *   - referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
- *   - Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
- *   - Stream: distinct / sorted / mapToInt+sum / reduce(0, Integer::sum) -> S20Demo02OrdenesMain (Sesión 20)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.servicio;
@@ -57,11 +40,16 @@ import java.util.List;
 
 public class ReporteServicio {
     // Más solicitados primero.
+    // Visto en clase: constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+    // Visto en clase: Predicate<T> / Comparator<T> / compareTo -> S19Demo03ReglasOrdenMain (Sesión 19)
+    // Visto en clase: expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
     private static final Comparator<ResumenTipoServicio> POR_SOLICITUDES =
             (a, b) -> Integer.compare(b.getSolicitudes(), a.getSolicitudes());
     // Más repetida primero; desempate alfabético.
     private static final Comparator<ResumenDescripcion> POR_CANTIDAD = (a, b) -> {
         int porCantidad = Integer.compare(b.getCantidad(), a.getCantidad());
+        // Visto en clase: operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
+        // Visto en clase: operador ternario ? : -> S02DemoOpciones (Sesión 02)
         return porCantidad != 0 ? porCantidad : a.getDescripcion().compareTo(b.getDescripcion());
     };
     // Más terminadas primero; desempata por mano de obra.
@@ -70,6 +58,7 @@ public class ReporteServicio {
         return porTerminadas != 0 ? porTerminadas : Integer.compare(b.getManoObra(), a.getManoObra());
     };
     // Más consumido primero.
+    // Visto en clase: encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
     private static final Comparator<ConsumoRepuesto> POR_CONSUMO = (a, b) -> Integer.compare(b.getUsadas(), a.getUsadas());
     // Más crítico primero: el que está más por debajo de su mínimo.
     private static final Comparator<AlertaStock> POR_CRITICIDAD = (a, b) -> Integer.compare(a.holgura(), b.holgura());
@@ -79,25 +68,28 @@ public class ReporteServicio {
     // Mayor puntaje primero; desempate alfabético.
     private static final Comparator<DesempenoProveedor> POR_PUNTAJE = (a, b) -> {
         // Puntaje con una cifra decimal convertido a entero (cast de S04) para comparar con Integer.compare.
+        // Visto en clase: conversiones: Integer.parseInt, String.valueOf, cast (int)/(double) -> S04DemoConversiones (Sesión 04) y S08Demo00 cast (double) (Sesión 08)
         int porPuntaje = Integer.compare((int) (b.puntajeGeneral() * 10), (int) (a.puntajeGeneral() * 10));
         return porPuntaje != 0 ? porPuntaje : a.getProveedor().getNombre().compareTo(b.getProveedor().getNombre());
     };
 
+    // Visto en clase: PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
     private final ReporteDAO reporteDAO;
 
+    // Visto en clase: clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
     /** Crea su propio DAO de reportes con la conexión del Singleton. */
     public ReporteServicio() {
-        this(new ReporteDAOJdbc(ConexionFactory.getInstancia()));
-    }
-
-    public ReporteServicio(ReporteDAO reporteDAO) {
-        this.reporteDAO = reporteDAO;
+        this.reporteDAO = new ReporteDAOJdbc(ConexionFactory.getInstancia());
     }
 
     // ------------------------------------------------------------ Servicios más solicitados
 
+    // Visto en clase: List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+    // Visto en clase: try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
     /** Un resumen por tipo de mantenimiento, del más solicitado al menos solicitado. */
     public List<ResumenTipoServicio> serviciosPorTipo() throws SQLException {
+        // Visto en clase: Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
+        // Visto en clase: Stream: distinct / sorted / mapToInt+sum / reduce(0, Integer::sum) -> S20Demo02OrdenesMain (Sesión 20)
         return reporteDAO.resumenPorTipo().stream()
                 .sorted(POR_SOLICITUDES)
                 .toList();
@@ -105,6 +97,7 @@ public class ReporteServicio {
 
     /** Las "maximo" descripciones de trabajo más repetidas (desempate alfabético). */
     public List<ResumenDescripcion> serviciosPorDescripcion(int maximo) throws SQLException {
+        // Visto en clase: if / else if / else -> S02DemoDecisiones (Sesión 02)
         if (maximo <= 0) {
             throw new DatoInvalidoException("El top de descripciones debe ser positivo.");
         }
@@ -112,8 +105,10 @@ public class ReporteServicio {
                 .sorted(POR_CANTIDAD)
                 .toList();
         List<ResumenDescripcion> primeras = new ArrayList<>();
+        // Visto en clase: ciclos for / for-each / while -> S03DemoFor y S03DemoWhile (Sesión 03)
         for (ResumenDescripcion resumen : todas) {
             if (primeras.size() == maximo) {
+                // Visto en clase: break / continue -> S03DemoFor (Sesión 03)
                 break;  // break de la sesión 03
             }
             primeras.add(resumen);
@@ -138,6 +133,7 @@ public class ReporteServicio {
 
     /** Repuestos con movimiento (usados o reservados), del más consumido al menos consumido. */
     public List<ConsumoRepuesto> consumoRepuestos() throws SQLException {
+        // Visto en clase: referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
         return reporteDAO.consumoRepuestos().stream()
                 .filter(ConsumoRepuesto::tuvoMovimiento)
                 .sorted(POR_CONSUMO)

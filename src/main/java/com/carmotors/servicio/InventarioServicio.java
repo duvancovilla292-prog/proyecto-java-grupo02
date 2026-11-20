@@ -11,26 +11,8 @@
  * Justificación: es la única clase que modifica cantidades de stock.
  *            Las órdenes de servicio no tocan RepuestoDAO directamente: piden
  *            reservar/deducir aquí, de modo que la regla vive en un solo lugar (SRP).
- * Visto en clase (demos del curso):
- *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
- *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
- *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
- *   - operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
- *   - if / else if / else -> S02DemoDecisiones (Sesión 02)
- *   - operador ternario ? : -> S02DemoOpciones (Sesión 02)
- *   - String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
- *   - toUpperCase / toLowerCase / contains -> S10Demo00SetMain normalizar y S18Demo00 correo.contains (Sesiones 10 y 18)
- *   - List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
- *   - try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
- *   - PATRÓN OBSERVER -> S14Demo01 PublicadorPedidos (Sesión 14)
- *   - PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
- *   - expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
- *   - Predicate<T> / Comparator<T> / compareTo -> S19Demo03ReglasOrdenMain (Sesión 19)
- *   - referencias a método (objeto::metodo, Clase::metodo) -> S19Demo01 System.out::println y S20Demo02 Item::getNombre (Sesiones 19 y 20)
- *   - Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
- *   - Stream: count / anyMatch / Arrays.stream -> S20Demo01FuentesMain (Sesión 20)
- *   - Stream: distinct / sorted / mapToInt+sum / reduce(0, Integer::sum) -> S20Demo02OrdenesMain (Sesión 20)
- *   - funciones de MySQL en el SQL (NOW, CURDATE, DATE_ADD, LAST_INSERT_ID) -> son SQL de MySQL, no Java; en Java solo se vio LocalDate.of (S12Demo02)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.servicio;
@@ -48,6 +30,7 @@ import com.carmotors.excepcion.DatoInvalidoException;
 import com.carmotors.excepcion.RecursoNoEncontradoException;
 import com.carmotors.excepcion.ReglaNegocioException;
 import com.carmotors.modelo.Lote;
+import com.carmotors.modelo.Proveedor;
 import com.carmotors.modelo.Repuesto;
 import com.carmotors.modelo.TipoRepuesto;
 import com.carmotors.servicio.observador.PublicadorInventario;
@@ -56,28 +39,28 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class InventarioServicio {
+    // Visto en clase: constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+    // Visto en clase: encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
+    // Visto en clase: PATRÓN DAO (interfaz + implementación) -> S18Demo01 UsuarioDAO (Sesión 18)
     private final RepuestoDAO repuestoDAO;
     private final TipoRepuestoDAO tipoDAO;
     private final LoteDAO loteDAO;
     private final ProveedorDAO proveedorDAO;
+    // Visto en clase: PATRÓN OBSERVER -> S14Demo01 PublicadorPedidos (Sesión 14)
     private final PublicadorInventario publicador; // sujeto del patrón Observer
 
+    // Visto en clase: clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
     /** Crea sus propios DAO JDBC y usa el publicador único de alertas (Observer). */
     public InventarioServicio() {
-        this(new RepuestoDAOJdbc(ConexionFactory.getInstancia()), new TipoRepuestoDAOJdbc(ConexionFactory.getInstancia()),
-                new LoteDAOJdbc(ConexionFactory.getInstancia()), new ProveedorDAOJdbc(ConexionFactory.getInstancia()),
-                PublicadorInventario.getInstancia());
+        this.repuestoDAO = new RepuestoDAOJdbc(ConexionFactory.getInstancia());
+        this.tipoDAO = new TipoRepuestoDAOJdbc(ConexionFactory.getInstancia());
+        this.loteDAO = new LoteDAOJdbc(ConexionFactory.getInstancia());
+        this.proveedorDAO = new ProveedorDAOJdbc(ConexionFactory.getInstancia());
+        this.publicador = PublicadorInventario.getInstancia();
     }
 
-    public InventarioServicio(RepuestoDAO repuestoDAO, TipoRepuestoDAO tipoDAO, LoteDAO loteDAO,
-                              ProveedorDAO proveedorDAO, PublicadorInventario publicador) {
-        this.repuestoDAO = repuestoDAO;
-        this.tipoDAO = tipoDAO;
-        this.loteDAO = loteDAO;
-        this.proveedorDAO = proveedorDAO;
-        this.publicador = publicador;
-    }
-
+    // Visto en clase: List / ArrayList / genéricos <T> -> S08Demo01ArrayListMain y S08Demo03 Caja<T> (Sesión 08)
+    // Visto en clase: try / catch / throw / throws -> S10Demo03ExcepcionesMain (Sesión 10)
     public List<TipoRepuesto> listarTipos() throws SQLException {
         return tipoDAO.listar();
     }
@@ -88,6 +71,7 @@ public class InventarioServicio {
      */
     public int registrarRepuesto(String nombre, int tipoId, String marca, int proveedorId, int precioCompra,
                                  int precioVenta, int stockMinimo) throws SQLException {
+        // Visto en clase: if / else if / else -> S02DemoDecisiones (Sesión 02)
         if (tipoDAO.buscarPorId(tipoId) == null) {
             throw new RecursoNoEncontradoException("No existe el tipo de repuesto " + tipoId + ".");
         }
@@ -119,9 +103,13 @@ public class InventarioServicio {
         if (proveedorDAO.buscarPorId(proveedorId) == null) {
             throw new RecursoNoEncontradoException("No existe el proveedor " + proveedorId + ".");
         }
+        // Visto en clase: operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
         if (codigo != null && loteDAO.buscarPorCodigo(codigo) != null) {
+            // Visto en clase: String: strip, isBlank, length, charAt, substring, equals -> S04DemoCadenas y S04DemoComparacion (Sesión 04)
+            // Visto en clase: toUpperCase / toLowerCase / contains -> S10Demo00SetMain normalizar y S18Demo00 correo.contains (Sesiones 10 y 18)
             throw new ReglaNegocioException("Ya existe un lote con el código " + codigo.strip().toUpperCase() + ".");
         }
+        // Visto en clase: funciones de MySQL en el SQL (NOW, CURDATE, DATE_ADD, LAST_INSERT_ID) -> son SQL de MySQL, no Java; en Java solo se vio LocalDate.of (S12Demo02)
         Lote lote = new Lote(0, codigo, repuestoId, proveedorId, null, fechaCaducidad, cantidad);  // fecha de ingreso: CURDATE() en MySQL
         int id = loteDAO.insertar(lote);
         repuestoDAO.actualizarCantidades(repuestoId, repuesto.getCantidadStock() + cantidad,
@@ -135,7 +123,10 @@ public class InventarioServicio {
 
     /** Búsqueda por nombre, marca o tipo sin distinguir mayúsculas (Stream + filter). */
     public List<Repuesto> buscar(String texto) throws SQLException {
+        // Visto en clase: operador ternario ? : -> S02DemoOpciones (Sesión 02)
         String criterio = texto == null ? "" : texto.strip().toLowerCase();
+        // Visto en clase: expresiones lambda -> S19Demo00LambdaMain (Sesión 19)
+        // Visto en clase: Stream: stream, filter, map, toList -> S20Demo00PrimerStreamMain y S20Demo02OrdenesMain (Sesión 20)
         return repuestoDAO.listar().stream()
                 .filter(r -> r.getNombre().toLowerCase().contains(criterio)
                         || r.getMarca().toLowerCase().contains(criterio)
@@ -149,6 +140,16 @@ public class InventarioServicio {
             throw new RecursoNoEncontradoException("No existe el repuesto " + id + ".");
         }
         return repuesto;
+    }
+
+    /** Proveedores registrados: referencia al pedir el id del proveedor. */
+    public List<Proveedor> listarProveedores() throws SQLException {
+        return proveedorDAO.listar();
+    }
+
+    /** Todos los lotes: referencia al pedir el código de un lote. */
+    public List<Lote> listarTodosLotes() throws SQLException {
+        return loteDAO.listar();
     }
 
     public List<Lote> listarLotes(int repuestoId) throws SQLException {
@@ -205,6 +206,7 @@ public class InventarioServicio {
 
     public int registrarTipo(String nombre) throws SQLException {
         TipoRepuesto nuevo = new TipoRepuesto(0, nombre);
+        // Visto en clase: Stream: count / anyMatch / Arrays.stream -> S20Demo01FuentesMain (Sesión 20)
         boolean existe = tipoDAO.listar().stream().anyMatch(t -> t.getNombre().equalsIgnoreCase(nuevo.getNombre()));
         if (existe) {
             throw new ReglaNegocioException("Ya existe el tipo " + nuevo.getNombre() + ".");

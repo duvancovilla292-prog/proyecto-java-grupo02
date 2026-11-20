@@ -11,11 +11,8 @@
  *            a una fecha y obtener la fecha actual lo resuelve MySQL
  *            (DATE_ADD, CURDATE) en la consulta del DAO. La REGLA de negocio
  *            (¿se notifica?, ¿está vencido?) queda aquí, en Java.
- * Visto en clase (demos del curso):
- *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
- *   - constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
- *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
- *   - Predicate<T> / Comparator<T> / compareTo -> S19Demo03ReglasOrdenMain (Sesión 19)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.modelo.reporte;
@@ -24,6 +21,8 @@ import com.carmotors.modelo.Cliente;
 import com.carmotors.modelo.Vehiculo;
 
 public class CalendarioPreventivo {
+    // Visto en clase: constantes final / static final -> Ticket (final IVA, Sesión 01) y S12Demo04 ConfiguracionSistema (Sesión 12)
+    // Visto en clase: encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
     private final Cliente cliente;
     private final Vehiculo vehiculo;
     private final String ultimo;         // fecha del último preventivo terminado
@@ -32,6 +31,7 @@ public class CalendarioPreventivo {
     private final String limite;         // hoy + días de anticipación
     private final boolean ordenAbierta;  // ya tiene un preventivo pendiente o en proceso
 
+    // Visto en clase: clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
     public CalendarioPreventivo(Cliente cliente, Vehiculo vehiculo, String ultimo, String proximo, String hoy,
                                 String limite, boolean ordenAbierta) {
         this.cliente = cliente;
@@ -45,6 +45,7 @@ public class CalendarioPreventivo {
 
     /** Se notifica si no hay un preventivo abierto y la fecha sugerida llega antes del límite de aviso. */
     public boolean debeNotificarse() {
+        // Visto en clase: Predicate<T> / Comparator<T> / compareTo -> S19Demo03ReglasOrdenMain (Sesión 19)
         return !ordenAbierta && proximo.compareTo(limite) <= 0;
     }
 

@@ -7,21 +7,21 @@
  *            sesión 06), dato calculado (disponible) en un método.
  * Justificación: el reporte solo necesita estos cinco datos; no se carga la
  *            entidad Repuesto completa (tipo, proveedor, precios).
- * Visto en clase (demos del curso):
- *   - clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
- *   - encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
- *   - operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
+ * Visto en clase: cada concepto de los demos del curso se señala con un
+ *   comentario "// Visto en clase" junto al código donde se usa.
  * ============================================================
  */
 package com.carmotors.modelo.reporte;
 
 public class AlertaStock {
+    // Visto en clase: encapsulamiento: private + getters + validación -> S06Demo00Billetera y S06Demo01PerfilUsuario (Sesión 06)
     private final int repuestoId;
     private final String nombre;
     private final int stock;
     private final int reservado;
     private final int stockMinimo;
 
+    // Visto en clase: clases, constructores y this -> S05Demo01Vehiculo (Sesión 05)
     public AlertaStock(int repuestoId, String nombre, int stock, int reservado, int stockMinimo) {
         this.repuestoId = repuestoId;
         this.nombre = nombre;
@@ -32,6 +32,7 @@ public class AlertaStock {
 
     /** Unidades libres para nuevas órdenes. */
     public int disponible() {
+        // Visto en clase: operadores aritméticos y lógicos -> S02DemoOperadores y S02DemoDecisiones (Sesión 02)
         return stock - reservado;
     }
 
